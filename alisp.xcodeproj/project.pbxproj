@@ -11,11 +11,7 @@
 		7D35FE77142DAC5200A59B17 /* data_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE76142DAC5200A59B17 /* data_types.cpp */; };
 		7D9AFB7214206F5E0025D3F6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AFB7114206F5E0025D3F6 /* main.cpp */; };
 		7D9AFB7414206F5E0025D3F6 /* alisp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7D9AFB7314206F5E0025D3F6 /* alisp.1 */; };
-		7D9AFB7B14206F7F0025D3F6 /* Macro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AFB7A14206F7F0025D3F6 /* Macro.cpp */; };
 		7D9AFB7D142072520025D3F6 /* Stack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AFB7C142072520025D3F6 /* Stack.cpp */; };
-		7D9AFB81142073650025D3F6 /* StackFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AFB80142073650025D3F6 /* StackFrame.cpp */; };
-		7D9AFB85142077AC0025D3F6 /* ALisp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AFB84142077AC0025D3F6 /* ALisp.cpp */; };
-		7DD648B41429AB1400ED61E1 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7DD648B31429AB1400ED61E1 /* Node.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,21 +33,12 @@
 		7D35FE69142BAE1900A59B17 /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader.cpp; sourceTree = "<group>"; };
 		7D35FE6B142BAE8900A59B17 /* data_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = data_types.h; sourceTree = "<group>"; };
 		7D35FE76142DAC5200A59B17 /* data_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = data_types.cpp; sourceTree = "<group>"; };
-		7D39F7F31429AC640008CD1B /* Cons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cons.h; sourceTree = "<group>"; };
 		7D9AFB6D14206F5E0025D3F6 /* alisp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = alisp; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D9AFB7114206F5E0025D3F6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7D9AFB7314206F5E0025D3F6 /* alisp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = alisp.1; sourceTree = "<group>"; };
-		7D9AFB7A14206F7F0025D3F6 /* Macro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Macro.cpp; sourceTree = "<group>"; };
 		7D9AFB7C142072520025D3F6 /* Stack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Stack.cpp; sourceTree = "<group>"; };
-		7D9AFB7E142072960025D3F6 /* Macro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Macro.h; sourceTree = "<group>"; };
 		7D9AFB7F142072EF0025D3F6 /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
-		7D9AFB80142073650025D3F6 /* StackFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackFrame.cpp; sourceTree = "<group>"; };
-		7D9AFB821420736F0025D3F6 /* StackFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackFrame.h; sourceTree = "<group>"; };
-		7D9AFB831420774A0025D3F6 /* ALisp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALisp.h; sourceTree = "<group>"; };
-		7D9AFB84142077AC0025D3F6 /* ALisp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ALisp.cpp; sourceTree = "<group>"; };
-		7DD648B31429AB1400ED61E1 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
 		7DD648B61429AB3300ED61E1 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
-		7DD648B71429AB5400ED61E1 /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +55,6 @@
 		7D9AFB6214206F5E0025D3F6 = {
 			isa = PBXGroup;
 			children = (
-				7DD648B71429AB5400ED61E1 /* Stack.h */,
 				7D9AFB7014206F5E0025D3F6 /* alisp */,
 				7D9AFB6E14206F5E0025D3F6 /* Products */,
 			);
@@ -86,17 +72,9 @@
 			isa = PBXGroup;
 			children = (
 				7D9AFB7114206F5E0025D3F6 /* main.cpp */,
-				7D39F7F31429AC640008CD1B /* Cons.h */,
 				7D9AFB7314206F5E0025D3F6 /* alisp.1 */,
-				7D9AFB7E142072960025D3F6 /* Macro.h */,
-				7D9AFB7A14206F7F0025D3F6 /* Macro.cpp */,
 				7D9AFB7F142072EF0025D3F6 /* Stack.h */,
 				7D9AFB7C142072520025D3F6 /* Stack.cpp */,
-				7D9AFB80142073650025D3F6 /* StackFrame.cpp */,
-				7D9AFB821420736F0025D3F6 /* StackFrame.h */,
-				7D9AFB831420774A0025D3F6 /* ALisp.h */,
-				7D9AFB84142077AC0025D3F6 /* ALisp.cpp */,
-				7DD648B31429AB1400ED61E1 /* Node.cpp */,
 				7DD648B61429AB3300ED61E1 /* Node.h */,
 				7D35FE66142B068C00A59B17 /* read_tables.h */,
 				7D35FE68142BAE1000A59B17 /* reader.h */,
@@ -159,11 +137,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D9AFB7214206F5E0025D3F6 /* main.cpp in Sources */,
-				7D9AFB7B14206F7F0025D3F6 /* Macro.cpp in Sources */,
 				7D9AFB7D142072520025D3F6 /* Stack.cpp in Sources */,
-				7D9AFB81142073650025D3F6 /* StackFrame.cpp in Sources */,
-				7D9AFB85142077AC0025D3F6 /* ALisp.cpp in Sources */,
-				7DD648B41429AB1400ED61E1 /* Node.cpp in Sources */,
 				7D35FE6A142BAE1900A59B17 /* reader.cpp in Sources */,
 				7D35FE77142DAC5200A59B17 /* data_types.cpp in Sources */,
 			);

@@ -55,20 +55,15 @@ int print(int in) {
 */
 
 
+#include "read_tables.h"
 
 int main (int argc, const char * argv[])
 {
-	String str("foo");
-	Int ten(10);
-	Cons cons(&str);
-	
-	cons.setCdr(new Cons(&ten));
-	
   stringbuf * buf;  
   stringstream ss;
   
   //ss << "(defun foo\n; a comment\n the rest)"; 
-  ss << "'(\"\" . (c d) )";
+  ss << "`((,a b) ,c ,@d)";
   buf = ss.rdbuf();
     
   Object *obj = read(*buf);

@@ -113,7 +113,7 @@ static const int syntax_type_for_char[255] = {
 	constituent, // Y
 	constituent, // Z
 	constituent, // [
-	single_escape, // \\
+	single_escape, // backquote
 	constituent,  // ]
 	constituent, // ^
 	constituent, // _

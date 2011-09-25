@@ -17,6 +17,13 @@ using namespace std;
 class Object;
 
 Cons *readList(streambuf &buf);
+String *readString(streambuf &buf);
+
+Object *quote(Object *exp);
+Object *backquote(Object *exp);
+Object *unquote(Object *exp);
+Object *splice(Object *exp);
+
 Object *readerMacro(char c, streambuf &buf);
 void unread(char c, streambuf &buf);
 string readToken(string token, streambuf &buf);

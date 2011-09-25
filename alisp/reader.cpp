@@ -62,6 +62,38 @@ String *readString(streambuf &buf) {
 
   return new String(theString);
 }
+
+Object *quote(Object *exp) {
+  Cons *cons = new Cons(Symbol::symbolWithString("QUOTE"));
+  cons->setCdr(new Cons(exp,Symbol::nil()));
+
+  return cons;
+}
+
+Object *backquote(Object *exp) {
+  // TODO: use backquote symbol from system package
+  Cons *cons = new Cons(Symbol::symbolWithString("BACKQUOTE"/*, Package::system() */));
+  cons->setCdr(new Cons(exp,Symbol::nil()));
+  
+  return cons;
+}
+
+Object *unquote(Object *exp) {
+  // TODO: use unquote symbol from system package
+  Cons *cons = new Cons(Symbol::symbolWithString("UNQUOTE"/*, Package::system() */));
+  cons->setCdr(new Cons(exp,Symbol::nil()));
+  
+  return cons;  
+}
+
+Object *splice(Object *exp) {
+  // TODO: use splice symbol from system package
+  Cons *cons = new Cons(Symbol::symbolWithString("SPLICE"/*, Package::system() */));
+  cons->setCdr(new Cons(exp,Symbol::nil()));
+  
+  return cons;
+}
+
 // (lambda (x y) x)
 Object *readerMacro(char c, streambuf &buf) {
   Cons *cons = NULL;
@@ -76,18 +108,21 @@ Object *readerMacro(char c, streambuf &buf) {
       }
       break;
     case ';':
-      // eat characters until we find newline or eof
-      
+      // eat characters until we find newline or eof      
       do {
         next = buf.sbumpc();        
       } while(next != '\n' && next != EOF);
       // then get next object and return, as if comment never happened
-      // is this problematic?
+      // TODO: is this problematic? time will tell.
       return read(buf);
     case '\'':
-      cons = new Cons(Symbol::symbolWithString("QUOTE"));
-      cons->setCdr(new Cons(read(buf),Symbol::nil()));
-      return cons;
+      
+//      cons = new Cons(Symbol::symbolWithString("QUOTE"));
+//      cons->setCdr(new Cons(read(buf),Symbol::nil()));
+//      return cons;
+
+      return quote(read(buf));
+      break;
     case '"':
       // read characters until we encounter a second double quote
       // ignore escape characters
@@ -95,7 +130,19 @@ Object *readerMacro(char c, streambuf &buf) {
       break;
     case '`':
       // TODO: fancy shit here.
+      return backquote(read(buf));
       break;
+    case ',':
+      // TODO: also do fancy shit here.
+      if(buf.sgetc() == '@') {
+        buf.sbumpc(); // throw away @
+        // splice
+        return splice(read(buf));
+      }
+      else {
+        // unquote
+        return unquote(read(buf));
+      }
     case ')':
     default:
       break;
