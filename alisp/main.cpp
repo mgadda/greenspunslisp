@@ -11,6 +11,8 @@
 #include <string>
 #include "data_types.h"
 #include "reader.h"
+#include "symbol.h"
+#include "package.h"
 
 using namespace std;
 
@@ -23,50 +25,36 @@ int Foo::print(int in) {
 	return 5;
 }
 
+int print(int in);
+
 int print(int in) {
 	return in;
 }
 
-
-
-/*
- syntax types:
- 
- constituent - used in "tokens" which represent numbers or symbols 
-	traits:
-		alphabetic
-		digit
-		package marker
-		plus sign
-		minus sign
-		dot
-		decimal point
-		ratio marker
-		exponent marker
-		invalid
- 
- macro character
- single escape
- multiple escape
- invalid
- whitespace
- 
- 
-*/
-
-
 #include "read_tables.h"
+#include <map>
 
 int main (int argc, const char * argv[])
 {
+  Package::system().usePackage(Package::keyword());
+  Package::common_lisp().usePackage(Package::system());
+  Package::common_lisp_user().usePackage(Package::common_lisp());
+  
+  // Set up some stuff...
+  Symbol *package = Package::common_lisp().internSymbol("*package*");  
+  package->setValue(&Package::common_lisp_user());
+  
   stringbuf * buf;  
   stringstream ss;
   
   //ss << "(defun foo\n; a comment\n the rest)"; 
-  ss << "`((,a b) ,c ,@d)";
+  ss << "(foo nil test)";
   buf = ss.rdbuf();
     
   Object *obj = read(*buf);
+  
+  obj->print(std::cout);
+  cout << endl;
   
 	// storing class pointer
 	int (Foo::*func)(int) = &Foo::print;

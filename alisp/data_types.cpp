@@ -8,41 +8,13 @@
 
 #include <iostream>
 #include "data_types.h"
+#include "package.h"
+#include "symbol.h"
 
 #pragma mark Object
 
 const char *Object::type() {
   return "OBJECT";
-}
-
-#pragma mark Cons
-
-Cons::Cons(Object *car) { 
-  car_ = car;
-}	
-
-Cons::Cons(Object *car, Object *cdr) {
-  car_ = car;
-  cdr_ = cdr;
-}
-
-const char *Cons::type() { 
-  return "CONS"; 
-}
-
-Object *Cons::car() { 
-  return car_; 
-}
-void Cons::setCar(Object *car) { 
-  car_ = car; 
-}
-
-Object *Cons::cdr() { 
-  return cdr_; 
-}
-
-void Cons::setCdr(Object *cdr) { 
-  cdr_ = cdr; 
 }
 
 #pragma mark String
@@ -58,46 +30,22 @@ const char *String::type() {
   return "STRING"; 
 }
 
-#pragma mark Symbol
-
-Symbol::Symbol(std::string name) { 
-  name_ = name; 
-}
-
-const char *Symbol::type() {
-  return "SYMBOL";
-}
-
-Symbol *Symbol::nil_;
-Symbol *Symbol::t_;
-
-Symbol *Symbol::nil() {
-  if (!nil_) {
-    nil_ = new Symbol("NIL");
+Object *String::print(std::ostream &os) {
+  // TODO: make string escaping more efficient
+  std::string escaped;
+  escaped += '"';
+  
+  std::size_t n = value_.length();
+  
+  for(std::size_t i=0; i < n; i++) {
+    if (value_[i] == '"') {
+      escaped += '\\';
+    }
+    escaped += value_[i];
   }
-  return nil_;  
-}
-
-Symbol *Symbol::t() {
-  if(!t_) {
-    t_ = new Symbol("T");
-  }
-  return t_;
-}
-
-std::string &Symbol::name() {
-  return name_;
-}
-
-Symbol *Symbol::symbolWithString(std::string name) {
-  if (name == "NIL" || name == "nil") {
-    return Symbol::nil();
-  }
-  else if (name == "T" || name == "t") {
-    return Symbol::t();
-  }
-  else {
-    return new Symbol(name);
-  }
+  escaped += '"';
+  
+  os << escaped;
+  return this;
 }
 

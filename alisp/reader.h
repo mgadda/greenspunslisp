@@ -11,24 +11,25 @@
 
 #include <iostream>
 #include <string>
-
-using namespace std;
+#include <sstream>
 
 class Object;
+class Cons;
+class String;
 
-Cons *readList(streambuf &buf);
-String *readString(streambuf &buf);
+Cons *readList(std::streambuf &buf);
+String *readString(std::streambuf &buf);
 
 Object *quote(Object *exp);
 Object *backquote(Object *exp);
 Object *unquote(Object *exp);
 Object *splice(Object *exp);
 
-Object *readerMacro(char c, streambuf &buf);
-void unread(char c, streambuf &buf);
-string readToken(string token, streambuf &buf);
-Object *makeObjectForToken(string token);
-Object *read(streambuf &buf);
+Object *readerMacro(char c, std::streambuf &buf);
+void unread(char c, std::streambuf &buf);
+std::string readToken(std::string token, std::streambuf &buf);
+Object *makeObjectForToken(std::string token);
+Object *read(std::streambuf &buf);
 
 
 #endif

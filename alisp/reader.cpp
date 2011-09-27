@@ -8,14 +8,18 @@
 
 #include <iostream>
 #include <string>
-#include "read_tables.h"
-#include "data_types.h"
-#include "reader.h"
+#include <algorithm>
 
-//using namespace std;
+#include "read_tables.h"
+#include "reader.h"
+#include "data_types.h"
+#include "symbol.h"
+#include "package.h"
+#include "cons.h"
+#include "keyword.h"
 
 // Read lists recursively, caller should retain reference to head 
-Cons *readList(streambuf &buf) {
+Cons *readList(std::streambuf &buf) {
   // could be an object, could have hit a terminating macro character
   // in which case it would be nil!
   // ah ha! An exit condition!
@@ -46,7 +50,7 @@ Cons *readList(streambuf &buf) {
   return cons;
 }
 
-String *readString(streambuf &buf) {
+String *readString(std::streambuf &buf) {
   std::string theString;
   char c = buf.sbumpc();
   
@@ -63,24 +67,22 @@ String *readString(streambuf &buf) {
   return new String(theString);
 }
 
-Object *quote(Object *exp) {
-  Cons *cons = new Cons(Symbol::symbolWithString("QUOTE"));
+Object *quote(Object *exp) {  
+  Cons *cons = new Cons(Package::common_lisp().internSymbol("QUOTE"));
   cons->setCdr(new Cons(exp,Symbol::nil()));
 
   return cons;
 }
 
 Object *backquote(Object *exp) {
-  // TODO: use backquote symbol from system package
-  Cons *cons = new Cons(Symbol::symbolWithString("BACKQUOTE"/*, Package::system() */));
+  Cons *cons = new Cons(Package::system().internSymbol("BACKQUOTE"));
   cons->setCdr(new Cons(exp,Symbol::nil()));
   
   return cons;
 }
 
 Object *unquote(Object *exp) {
-  // TODO: use unquote symbol from system package
-  Cons *cons = new Cons(Symbol::symbolWithString("UNQUOTE"/*, Package::system() */));
+  Cons *cons = new Cons(Package::system().internSymbol("UNQUOTE"));
   cons->setCdr(new Cons(exp,Symbol::nil()));
   
   return cons;  
@@ -88,14 +90,14 @@ Object *unquote(Object *exp) {
 
 Object *splice(Object *exp) {
   // TODO: use splice symbol from system package
-  Cons *cons = new Cons(Symbol::symbolWithString("SPLICE"/*, Package::system() */));
+  Cons *cons = new Cons(Package::system().internSymbol("SPLICE"));
   cons->setCdr(new Cons(exp,Symbol::nil()));
   
   return cons;
 }
 
 // (lambda (x y) x)
-Object *readerMacro(char c, streambuf &buf) {
+Object *readerMacro(char c, std::streambuf &buf) {
   Cons *cons = NULL;
   char next;
   
@@ -151,11 +153,11 @@ Object *readerMacro(char c, streambuf &buf) {
 }
 
 
-void unread(char c, streambuf &buf) {
+void unread(char c, std::streambuf &buf) {
   buf.sputbackc(c);
 }
 
-string readToken(string token, streambuf &buf) {
+std::string readToken(std::string token, std::streambuf &buf) {
   bool done = false;
   char y, z;
   
@@ -190,12 +192,59 @@ string readToken(string token, streambuf &buf) {
   return token;
 }
 
-Object *makeObjectForToken(string token) {
+Object *makeObjectForToken(std::string token) {
+  Package *package = NULL;
+  
   // TODO: add number/symbol detection and return correct type of Object
-  return Symbol::symbolWithString(token);
+  // TODO: read upcase setting from environment before upcasing here
+  std::string symbolName;
+  std::string packageName;
+  
+  std::transform(token.begin(), token.end(), std::back_inserter(symbolName), ::toupper);
+  
+  // Keyword
+  if (symbolName[0] == ':') {    
+    return Package::keywordForName(symbolName.substr(1));
+  }
+
+  // Symbol with package specifier
+  size_t pos = symbolName.find("::");
+  if (pos > 0 && pos < symbolName.length() - 2) {
+    symbolName = symbolName.substr(pos+2);
+    packageName = symbolName.substr(0, pos);
+    
+    package = &Package::find(packageName);
+    if (!package) {
+      throw "package does not exist";
+    }
+    return package->internSymbol(symbolName);
+  }
+  
+  pos = token.find(':');
+  if (pos > 0 && pos < token.length() - 1) {
+    symbolName = symbolName.substr(pos+1);
+    packageName = symbolName.substr(0, pos);
+    
+    //Package &externalPackage = Package::packageWithName(packageName);
+    package = &Package::find(packageName);
+    if (!package) {
+      throw "package does not exist";
+    }
+    
+    Symbol *externalSym = (*package)[token.substr(pos+1)];
+    if (!externalSym) {
+      throw "package has no symbol with name ____";
+    }
+    return externalSym;
+  }
+
+  // Symbol with no package specifier
+  // use current package in *package*
+  package = (Package*)Package::common_lisp().resolveExternSymbol("*package*")->value();
+  return package->internSymbol(symbolName);
 }
 
-Object *read(streambuf &buf) {
+Object *read(std::streambuf &buf) {
 	// 1.
 	char x, y;
   
@@ -204,7 +253,7 @@ Object *read(streambuf &buf) {
     
 		x = buf.sbumpc();
 
-    string token;
+    std::string token;
     
 		switch(syntax_type_for_char[x]) {
 			case invalid: // 2.

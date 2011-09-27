@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		7D35FE6A142BAE1900A59B17 /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE69142BAE1900A59B17 /* reader.cpp */; };
 		7D35FE77142DAC5200A59B17 /* data_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE76142DAC5200A59B17 /* data_types.cpp */; };
+		7D35FE7A142EED6300A59B17 /* package.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE79142EED6300A59B17 /* package.cpp */; };
+		7D35FE7E142F837F00A59B17 /* symbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE7D142F837F00A59B17 /* symbol.cpp */; };
+		7D6EEE04142FA669003DDA6C /* printer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D6EEE03142FA669003DDA6C /* printer.cpp */; };
+		7D6EEE0914302956003DDA6C /* cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D6EEE0814302956003DDA6C /* cons.cpp */; };
+		7D774CDB14318BD500C14CC8 /* keyword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D774CDA14318BD500C14CC8 /* keyword.cpp */; };
 		7D9AFB7214206F5E0025D3F6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AFB7114206F5E0025D3F6 /* main.cpp */; };
 		7D9AFB7414206F5E0025D3F6 /* alisp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7D9AFB7314206F5E0025D3F6 /* alisp.1 */; };
 		7D9AFB7D142072520025D3F6 /* Stack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D9AFB7C142072520025D3F6 /* Stack.cpp */; };
@@ -33,6 +38,17 @@
 		7D35FE69142BAE1900A59B17 /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader.cpp; sourceTree = "<group>"; };
 		7D35FE6B142BAE8900A59B17 /* data_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = data_types.h; sourceTree = "<group>"; };
 		7D35FE76142DAC5200A59B17 /* data_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = data_types.cpp; sourceTree = "<group>"; };
+		7D35FE78142EEC5600A59B17 /* package.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = package.h; sourceTree = "<group>"; };
+		7D35FE79142EED6300A59B17 /* package.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = package.cpp; sourceTree = "<group>"; };
+		7D35FE7B142EF4E800A59B17 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
+		7D35FE7C142F7D5B00A59B17 /* symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symbol.h; sourceTree = "<group>"; };
+		7D35FE7D142F837F00A59B17 /* symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = symbol.cpp; sourceTree = "<group>"; };
+		7D6EEE03142FA669003DDA6C /* printer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printer.cpp; sourceTree = "<group>"; };
+		7D6EEE06142FA671003DDA6C /* printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer.h; sourceTree = "<group>"; };
+		7D6EEE071430291D003DDA6C /* cons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cons.h; sourceTree = "<group>"; };
+		7D6EEE0814302956003DDA6C /* cons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cons.cpp; sourceTree = "<group>"; };
+		7D774CD814318BC400C14CC8 /* keyword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keyword.h; sourceTree = "<group>"; };
+		7D774CDA14318BD500C14CC8 /* keyword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keyword.cpp; sourceTree = "<group>"; };
 		7D9AFB6D14206F5E0025D3F6 /* alisp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = alisp; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D9AFB7114206F5E0025D3F6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7D9AFB7314206F5E0025D3F6 /* alisp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = alisp.1; sourceTree = "<group>"; };
@@ -81,6 +97,17 @@
 				7D35FE69142BAE1900A59B17 /* reader.cpp */,
 				7D35FE6B142BAE8900A59B17 /* data_types.h */,
 				7D35FE76142DAC5200A59B17 /* data_types.cpp */,
+				7D35FE78142EEC5600A59B17 /* package.h */,
+				7D35FE79142EED6300A59B17 /* package.cpp */,
+				7D35FE7B142EF4E800A59B17 /* object.h */,
+				7D35FE7C142F7D5B00A59B17 /* symbol.h */,
+				7D35FE7D142F837F00A59B17 /* symbol.cpp */,
+				7D6EEE06142FA671003DDA6C /* printer.h */,
+				7D6EEE03142FA669003DDA6C /* printer.cpp */,
+				7D6EEE071430291D003DDA6C /* cons.h */,
+				7D6EEE0814302956003DDA6C /* cons.cpp */,
+				7D774CD814318BC400C14CC8 /* keyword.h */,
+				7D774CDA14318BD500C14CC8 /* keyword.cpp */,
 			);
 			path = alisp;
 			sourceTree = "<group>";
@@ -140,6 +167,11 @@
 				7D9AFB7D142072520025D3F6 /* Stack.cpp in Sources */,
 				7D35FE6A142BAE1900A59B17 /* reader.cpp in Sources */,
 				7D35FE77142DAC5200A59B17 /* data_types.cpp in Sources */,
+				7D35FE7A142EED6300A59B17 /* package.cpp in Sources */,
+				7D35FE7E142F837F00A59B17 /* symbol.cpp in Sources */,
+				7D6EEE04142FA669003DDA6C /* printer.cpp in Sources */,
+				7D6EEE0914302956003DDA6C /* cons.cpp in Sources */,
+				7D774CDB14318BD500C14CC8 /* keyword.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
