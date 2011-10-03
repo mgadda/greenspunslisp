@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D06A6AE1437DDEA0004830B /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6AD1437DDE90004830B /* system.cpp */; };
+		7D06A6B11437E3530004830B /* special_operator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6B01437E3530004830B /* special_operator.cpp */; };
+		7D06A6B41437E7FF0004830B /* callable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6B31437E7FF0004830B /* callable.cpp */; };
+		7D06A6B71437E9980004830B /* macro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6B61437E9980004830B /* macro.cpp */; };
+		7D0F500D1432D8C90041E2D4 /* environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D0F500C1432D8C90041E2D4 /* environment.cpp */; };
+		7D0F505314341EEC0041E2D4 /* function.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D0F505214341EEC0041E2D4 /* function.cpp */; };
+		7D0F50561434336E0041E2D4 /* evaler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D0F50551434336E0041E2D4 /* evaler.cpp */; };
 		7D35FE6A142BAE1900A59B17 /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE69142BAE1900A59B17 /* reader.cpp */; };
 		7D35FE77142DAC5200A59B17 /* data_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE76142DAC5200A59B17 /* data_types.cpp */; };
 		7D35FE7A142EED6300A59B17 /* package.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE79142EED6300A59B17 /* package.cpp */; };
@@ -33,6 +40,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7D06A6AB1437DDCE0004830B /* system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
+		7D06A6AD1437DDE90004830B /* system.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = system.cpp; sourceTree = "<group>"; };
+		7D06A6AF1437E34B0004830B /* special_operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = special_operator.h; sourceTree = "<group>"; };
+		7D06A6B01437E3530004830B /* special_operator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = special_operator.cpp; sourceTree = "<group>"; };
+		7D06A6B21437E7F50004830B /* callable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = callable.h; sourceTree = "<group>"; };
+		7D06A6B31437E7FF0004830B /* callable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = callable.cpp; sourceTree = "<group>"; };
+		7D06A6B51437E96B0004830B /* macro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macro.h; sourceTree = "<group>"; };
+		7D06A6B61437E9980004830B /* macro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = macro.cpp; sourceTree = "<group>"; };
+		7D0F500A1432CF7E0041E2D4 /* environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = environment.h; sourceTree = "<group>"; };
+		7D0F500C1432D8C90041E2D4 /* environment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = environment.cpp; sourceTree = "<group>"; };
+		7D0F505114341EE30041E2D4 /* function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = function.h; sourceTree = "<group>"; };
+		7D0F505214341EEC0041E2D4 /* function.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = function.cpp; sourceTree = "<group>"; };
+		7D0F5054143432FA0041E2D4 /* evaler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = evaler.h; sourceTree = "<group>"; };
+		7D0F50551434336E0041E2D4 /* evaler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = evaler.cpp; sourceTree = "<group>"; };
 		7D35FE66142B068C00A59B17 /* read_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = read_tables.h; sourceTree = "<group>"; };
 		7D35FE68142BAE1000A59B17 /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
 		7D35FE69142BAE1900A59B17 /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader.cpp; sourceTree = "<group>"; };
@@ -108,6 +129,20 @@
 				7D6EEE0814302956003DDA6C /* cons.cpp */,
 				7D774CD814318BC400C14CC8 /* keyword.h */,
 				7D774CDA14318BD500C14CC8 /* keyword.cpp */,
+				7D0F500A1432CF7E0041E2D4 /* environment.h */,
+				7D0F500C1432D8C90041E2D4 /* environment.cpp */,
+				7D0F505114341EE30041E2D4 /* function.h */,
+				7D0F505214341EEC0041E2D4 /* function.cpp */,
+				7D0F5054143432FA0041E2D4 /* evaler.h */,
+				7D0F50551434336E0041E2D4 /* evaler.cpp */,
+				7D06A6AB1437DDCE0004830B /* system.h */,
+				7D06A6AD1437DDE90004830B /* system.cpp */,
+				7D06A6AF1437E34B0004830B /* special_operator.h */,
+				7D06A6B01437E3530004830B /* special_operator.cpp */,
+				7D06A6B21437E7F50004830B /* callable.h */,
+				7D06A6B31437E7FF0004830B /* callable.cpp */,
+				7D06A6B51437E96B0004830B /* macro.h */,
+				7D06A6B61437E9980004830B /* macro.cpp */,
 			);
 			path = alisp;
 			sourceTree = "<group>";
@@ -172,6 +207,13 @@
 				7D6EEE04142FA669003DDA6C /* printer.cpp in Sources */,
 				7D6EEE0914302956003DDA6C /* cons.cpp in Sources */,
 				7D774CDB14318BD500C14CC8 /* keyword.cpp in Sources */,
+				7D0F500D1432D8C90041E2D4 /* environment.cpp in Sources */,
+				7D0F505314341EEC0041E2D4 /* function.cpp in Sources */,
+				7D0F50561434336E0041E2D4 /* evaler.cpp in Sources */,
+				7D06A6AE1437DDEA0004830B /* system.cpp in Sources */,
+				7D06A6B11437E3530004830B /* special_operator.cpp in Sources */,
+				7D06A6B41437E7FF0004830B /* callable.cpp in Sources */,
+				7D06A6B71437E9980004830B /* macro.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,8 +241,10 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = /usr/local/Cellar/pcre/8.10/lib/;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lpcre";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -221,6 +265,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_LDFLAGS = "-lpcre";
 				SDKROOT = macosx;
 			};
 			name = Release;

@@ -7,3 +7,8 @@
 //
 
 #include <iostream>
+#include "printer.h"
+
+Object *print(std::ostream &os, Object *obj) {
+  return NULL;
+}

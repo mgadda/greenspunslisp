@@ -29,17 +29,16 @@ public:
 };
 
 
-class Int : public Object {
+class Integer : public Object {
 	int value_;
 	
 public:
-	virtual const char *type() { return "INT"; }
+	virtual const char *type() { return "INTEGER"; }
   Object *print(std::ostream &os) { os << value_; return this; }
   
-	Int() {}
-	Int(int val) {
-		value_ = val;
-	}
+	Integer() {}
+	Integer(int val) : value_(val) {}
+  Integer(std::string &str);
 };
 
 class Readtable : public Object {

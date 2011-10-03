@@ -49,3 +49,8 @@ Object *String::print(std::ostream &os) {
   return this;
 }
 
+#pragma mark Integer
+
+Integer::Integer(std::string &str) {
+  value_ = atoi(str.c_str());
+}

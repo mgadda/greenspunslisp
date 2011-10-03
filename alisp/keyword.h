@@ -9,6 +9,14 @@
 #ifndef alisp_keyword_h
 #define alisp_keyword_h
 
+#include "symbol.h"
 
+class Keyword : public Symbol {
+public:
+  virtual const char *type() { return "KEYWORD"; }
+  Keyword(std::string name);
+  
+  virtual Object *print(std::ostream &os);
+};
 
 #endif

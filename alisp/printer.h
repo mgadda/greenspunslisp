@@ -9,6 +9,10 @@
 #ifndef alisp_printer_h
 #define alisp_printer_h
 
+#include <iostream>
 
+class Object;
+
+Object *print(std::ostream &os, Object *obj);
 
 #endif

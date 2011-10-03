@@ -7,61 +7,114 @@
 //
 
 #include <iostream>
+#include <cstdio>
 #include <sstream>
 #include <string>
 #include "data_types.h"
 #include "reader.h"
 #include "symbol.h"
 #include "package.h"
+#include "environment.h"
 
-using namespace std;
+#include "evaler.h"
+#include "system.h"
 
-class Foo {
-public:
-	int print(int);
-};
+//class Foo {
+//public:
+//	int print(int);
+//};
+//
+//int Foo::print(int in) {
+//	return 5;
+//}
+//
+//int print(int in);
+//
+//int print(int in) {
+//	return in;
+//}
 
-int Foo::print(int in) {
-	return 5;
-}
+//Symbol *f = Package::common_lisp().internSymbol("foo");
+//env->bindVariable(f, Symbol::nil());
 
-int print(int in);
+//Environment *env2 =  new Environment(env);
 
-int print(int in) {
-	return in;
-}
-
-#include "read_tables.h"
-#include <map>
+//env2->variableForSymbol(f)->print(std::cout);
 
 int main (int argc, const char * argv[])
 {
+  
   Package::system().usePackage(Package::keyword());
   Package::common_lisp().usePackage(Package::system());
   Package::common_lisp_user().usePackage(Package::common_lisp());
   
   // Set up some stuff...
-  Symbol *package = Package::common_lisp().internSymbol("*package*");  
-  package->setValue(&Package::common_lisp_user());
+  Symbol *sym = Package::common_lisp().internSymbol("*PACKAGE*");  
+  sym->setValue(&Package::common_lisp_user());
+  Package::common_lisp().exportSymbol(sym->name());
   
-  stringbuf * buf;  
-  stringstream ss;
+  Symbol::nil();
+  Symbol::t();
   
-  //ss << "(defun foo\n; a comment\n the rest)"; 
-  ss << "(foo nil test)";
-  buf = ss.rdbuf();
+  Environment *env =  new Environment(NULL);
+  
+  initSystem();
+  
+  
+  std::stringbuf * buf;  
+  std::stringstream ss;
+
+  int lineno = 0;
+  std::cout << "[" << lineno << "]> ";
+
+  while (true) {
     
-  Object *obj = read(*buf);
-  
-  obj->print(std::cout);
-  cout << endl;
+    unsigned int nestedCount = 0;
+    std::string input;
+    char c;
+    do {
+      //c = getc(std::cin);
+      c = getchar();
+      
+      if (c == '(') nestedCount++;
+      else if (c == ')') nestedCount--;
+      
+      input += c;
+      
+    } while (nestedCount > 0 || input[input.length()-1] != '\n');
+    
+    ss.clear();
+    ss << input;
+    buf = ss.rdbuf();
+    
+    Object *obj = NULL;
+    
+    try {
+      obj = read(*buf);
+    }
+    catch (const char *msg) {
+      std::cout << msg;
+    }
+    
+    if (obj) {
+      try {
+        eval(obj, env)->print(std::cout);
+      } catch (const char *msg) {        
+        std::cout << msg;
+      }
+      
+      std::cout << std::endl;
+      std::cout << "[" << ++lineno << "]> ";
+
+    }
+  }
   
 	// storing class pointer
-	int (Foo::*func)(int) = &Foo::print;
-	
-	Foo *foo = new Foo();
-	
-	cout << (*foo.*func)(100);
+//	int (Foo::*func)(int) = &Foo::print;
+//	
+//	Foo *foo = new Foo();
+//	
+//  std::cout << (*foo.*func)(100);
 //	
 //	Stack<string> stack;
 //	
@@ -81,4 +134,3 @@ int main (int argc, const char * argv[])
 	
     return 0;
 }
-

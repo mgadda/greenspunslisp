@@ -7,3 +7,14 @@
 //
 
 #include <iostream>
+#include <string>
+#include "keyword.h"
+
+Keyword::Keyword(std::string name) : Symbol(name) {
+  
+}
+
+Object *Keyword::print(std::ostream &os) {
+  os << ":" << name();
+  return this;
+}
