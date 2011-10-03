@@ -18,33 +18,39 @@
 
 extern Object *eval(Object* obj, Environment *env);
 
+namespace  {
+  void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*)) {
+    Symbol *sym = package.internSymbol(name);
+    package.exportSymbol(name);
+    
+    Callable *fun = new Function(funcPtr);  
+    sym->setFunction(fun);
+  }
+
+  void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*)) {
+    Symbol *sym = package.internSymbol(name);
+    package.exportSymbol(name);
+    
+    Callable *fun = new SpecialOperator(funcPtr);  
+    sym->setFunction(fun);
+  }
+
+};
+                        
 void initSystem() {
-  Symbol *sym;
-  Callable *fun;
-  // build special operator functions and system functions
   Package &system = Package::system();
   
-  // QUOTE
-  sym = system.internSymbol("QUOTE");
-  system.exportSymbol("QUOTE");
+  // Special Operators
+  bindSymbolToSpecialOperator(system, "QUOTE", quote);
+  bindSymbolToSpecialOperator(system, "SETQ", setq);
   
-  fun = new SpecialOperator(quote);  
-  sym->setFunction(fun);
-  
-  // SETQ
-  sym = system.internSymbol("SETQ");
-  system.exportSymbol("SETQ");
-  
-  fun = new SpecialOperator(setq);  
-  sym->setFunction(fun);
-  
-  
-  
-//  sym = system.internSymbol("LENGTH");
-//  fun = new Funct(ion(&length);
-  
-  //sym->setFunction(fun);
+  // System Functions
+  bindSymbolToFunc(system, "LENGTH", length);
+  bindSymbolToFunc(system, "CAR", car);
+  bindSymbolToFunc(system, "CDR", cdr);
 }
+
+#pragma mark Special Operators
 
 Object *quote(Cons* args, Environment *env) {
   if (args->length() > 1) {
@@ -55,8 +61,11 @@ Object *quote(Cons* args, Environment *env) {
 
 Object *setq(Cons* args, Environment *env) {
   // check number of arguemnts, if odd, raise error
-  if (args->length() % 2 == 1) 
-    throw "SETQ: odd number of arguments";
+  if (args->length() % 2 == 1) {
+    char *errMsg;
+    asprintf(&errMsg, "SETQ: odd number of arguments: %s", ((Object*)args)->print());
+    throw errMsg;
+  }
   
   Symbol *symbol = (Symbol*)args->car();
   Object *value = ((Cons*)args->cdr())->car();
@@ -65,6 +74,36 @@ Object *setq(Cons* args, Environment *env) {
   return env->bindVariable(symbol, eval(value, env));
 }
 
-//Int *length(Cons* args, Environment *env) {
-//  return new Int((int)args->length());
-//}
+#pragma mark System Functions
+
+Object *length(Cons* args, Environment *env) {
+  return new Integer((int)args->length());
+}
+
+Object *car(Cons* args, Environment *env) {
+  Object *list = args->car(); // first argument
+  
+  if (NILP(args->car()))
+    return Symbol::nil();
+  
+  if (list->type() != std::string("CONS")) {
+    char *errMsg;
+    asprintf(&errMsg, "CAR: %s is not a list", list->print());
+    throw errMsg;
+  }
+  return ((Cons*)list)->car();
+}
+
+Object *cdr(Cons* args, Environment *env) {
+  Object *list = args->car(); // first argument
+  
+  if (NILP(args->car()))
+    return Symbol::nil();
+  
+  if (list->type() != std::string("CONS")) {
+    char *errMsg;
+    asprintf(&errMsg, "CDR: %s is not a list", list->print());
+    throw errMsg;
+  }
+  return ((Cons*)list)->cdr();
+}

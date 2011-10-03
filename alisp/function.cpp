@@ -18,6 +18,10 @@ extern Object *eval(Object* obj, Environment *env);
 Function::Function(Object *form, Cons *argNames) : form_(form), argNames_(argNames) {
 }
 
+Function::Function(Object *(*internalFun)(Cons*,Environment*)) : internalFun_(internalFun) {
+    
+}
+
 Function *Function::print(std::ostream &os) {
   form_->print(os);
   return this;
@@ -25,6 +29,10 @@ Function *Function::print(std::ostream &os) {
 
 Object *Function::call(Cons *args, Environment *env) {
   Environment *funEnv = new Environment(env);
+  
+  if (internalFun_) {
+    return internalFun_(args, funEnv);
+  }
   
   __block Cons *argNamesPtr = argNames_;
   

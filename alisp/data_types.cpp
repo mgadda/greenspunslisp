@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include "data_types.h"
 #include "package.h"
 #include "symbol.h"
@@ -15,6 +16,12 @@
 
 const char *Object::type() {
   return "OBJECT";
+}
+
+const char *Object::print() {
+  std::ostringstream oss;
+  print(oss);
+  return oss.str().c_str();
 }
 
 #pragma mark String

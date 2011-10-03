@@ -18,6 +18,7 @@ class Object {
 public:
 	virtual const char *type();
   virtual Object *print(std::ostream &os)=0;
+  const char *print();
 };
 
 

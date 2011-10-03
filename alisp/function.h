@@ -20,10 +20,13 @@ class Function : public Callable {
   Object *form_;
   Cons *argNames_;
   
+  Object *(*internalFun_)(Cons*,Environment*);
+  
   // arg list
   
 public:
   Function(Object *form, Cons *argNames);
+  Function(Object *(*internalFun_)(Cons*,Environment*));
   
   virtual const char *type() { return "FUNCTION"; }
   virtual Function *print(std::ostream &os);
