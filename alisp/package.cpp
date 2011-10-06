@@ -26,8 +26,11 @@ Package::Package(std::string name) {
 
 std::map<std::string, Package*> Package::packages_;
 
-Package &Package::find(std::string name) {
-  return *Package::packages_[name];
+Package *Package::find(std::string name) {
+  if (Package::packages_.count(name))
+    return Package::packages_[name];
+  else
+    return NULL;
 }
 
 const char *Package::type() {
@@ -52,7 +55,10 @@ Symbol *Package::operator[](std::string name) {
 }
 
 Symbol *Package::resolveInternSymbol(std::string name) {
-  return symbols_[name];
+  if (symbols_.count(name)) 
+    return symbols_[name];
+  else
+    return NULL;
 }
 
 Symbol *Package::resolveExternSymbol(std::string name) {
@@ -73,6 +79,7 @@ Symbol *Package::resolveExternSymbol(std::string name) {
 Symbol *Package::internSymbol(std::string name) {  
   if (!resolveInternSymbol(name) && !resolveExternSymbol(name)) {
     symbols_[name] = new Symbol(name);
+    std::cout << "Interning new symbol " << name << "=" << (long)symbols_[name] << std::endl;
     symbols_[name]->setPackage(this);
   }  
   return symbols_[name];

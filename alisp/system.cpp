@@ -67,6 +67,7 @@ Object *setq(Cons* args, Environment *env) {
     throw errMsg;
   }
   
+  // TODO: SETQ should bind multiple pairs
   Symbol *symbol = (Symbol*)args->car();
   Object *value = ((Cons*)args->cdr())->car();
   // extract pairs of values from args

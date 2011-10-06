@@ -10,8 +10,7 @@
 #include "symbol.h"
 #include "package.h"
 #include "cons.h"
-
-class Callable;
+#include "callable.h"
 
 Symbol::Symbol(std::string name) { 
   name_ = name;

@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include "special_operator.h"
+#include "cons.h"
 
 SpecialOperator::SpecialOperator(Object *(*internalFun)(Cons*,Environment*)) 
   : internalFun_(internalFun) {

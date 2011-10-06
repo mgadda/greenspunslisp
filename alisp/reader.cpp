@@ -235,7 +235,7 @@ namespace  {
       packageName = symbolName.substr(0, pos);
       symbolName = symbolName.substr(pos+2);
       
-      package = &Package::find(packageName);
+      package = Package::find(packageName);
       if (!package) {
         throw "package does not exist";
       }
@@ -249,7 +249,7 @@ namespace  {
       symbolName = symbolName.substr(pos+1);
       
       //Package &externalPackage = Package::packageWithName(packageName);
-      package = &Package::find(packageName);
+      package = Package::find(packageName);
       if (!package) {
         throw "package does not exist";
       }

@@ -49,7 +49,7 @@ public:
   virtual const char *type();
   Object *print(std::ostream &os);
   
-  static Package &find(std::string name);
+  static Package *find(std::string name);
   
   Symbol *internSymbol(std::string name); 
   void uninternSymbol(Symbol *symbol);

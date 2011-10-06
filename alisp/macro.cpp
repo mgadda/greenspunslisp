@@ -9,6 +9,7 @@
 #include <iostream>
 #include "macro.h"
 #include "symbol.h"
+#include "cons.h"
 
 Macro::Macro() {
 }

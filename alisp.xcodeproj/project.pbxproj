@@ -11,6 +11,7 @@
 		7D06A6B11437E3530004830B /* special_operator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6B01437E3530004830B /* special_operator.cpp */; };
 		7D06A6B41437E7FF0004830B /* callable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6B31437E7FF0004830B /* callable.cpp */; };
 		7D06A6B71437E9980004830B /* macro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6B61437E9980004830B /* macro.cpp */; };
+		7D06A6C8143A89740004830B /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D06A6C7143A89740004830B /* object.cpp */; };
 		7D0F500D1432D8C90041E2D4 /* environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D0F500C1432D8C90041E2D4 /* environment.cpp */; };
 		7D0F505314341EEC0041E2D4 /* function.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D0F505214341EEC0041E2D4 /* function.cpp */; };
 		7D0F50561434336E0041E2D4 /* evaler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D0F50551434336E0041E2D4 /* evaler.cpp */; };
@@ -48,6 +49,7 @@
 		7D06A6B31437E7FF0004830B /* callable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = callable.cpp; sourceTree = "<group>"; };
 		7D06A6B51437E96B0004830B /* macro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macro.h; sourceTree = "<group>"; };
 		7D06A6B61437E9980004830B /* macro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = macro.cpp; sourceTree = "<group>"; };
+		7D06A6C7143A89740004830B /* object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = object.cpp; sourceTree = "<group>"; };
 		7D0F500A1432CF7E0041E2D4 /* environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = environment.h; sourceTree = "<group>"; };
 		7D0F500C1432D8C90041E2D4 /* environment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = environment.cpp; sourceTree = "<group>"; };
 		7D0F505114341EE30041E2D4 /* function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = function.h; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				7D35FE78142EEC5600A59B17 /* package.h */,
 				7D35FE79142EED6300A59B17 /* package.cpp */,
 				7D35FE7B142EF4E800A59B17 /* object.h */,
+				7D06A6C7143A89740004830B /* object.cpp */,
 				7D35FE7C142F7D5B00A59B17 /* symbol.h */,
 				7D35FE7D142F837F00A59B17 /* symbol.cpp */,
 				7D6EEE06142FA671003DDA6C /* printer.h */,
@@ -214,6 +217,7 @@
 				7D06A6B11437E3530004830B /* special_operator.cpp in Sources */,
 				7D06A6B41437E7FF0004830B /* callable.cpp in Sources */,
 				7D06A6B71437E9980004830B /* macro.cpp in Sources */,
+				7D06A6C8143A89740004830B /* object.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +277,7 @@
 		7D9AFB7814206F5E0025D3F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_LDFLAGS = "-lpcre";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -280,6 +285,7 @@
 		7D9AFB7914206F5E0025D3F6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_LDFLAGS = "-lpcre";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

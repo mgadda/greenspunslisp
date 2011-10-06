@@ -9,6 +9,7 @@
 #include <iostream>
 #include "environment.h"
 #include "symbol.h"
+#include "callable.h"
 
 class Callable;
 
@@ -28,8 +29,10 @@ Callable *Environment::bindFunction(Symbol* symbol, Callable* function) {
 }
 
 Object *Environment::variableForSymbol(Symbol *symbol) {
-  Object *obj = variableBindings_[symbol];
-  if (!obj) {
+  Object *obj = NULL;
+  if (variableBindings_.count(symbol))
+    obj = variableBindings_[symbol];
+  else {
     if (parent_)
       obj = parent_->variableForSymbol(symbol); // lexical value
     else 
@@ -38,9 +41,11 @@ Object *Environment::variableForSymbol(Symbol *symbol) {
   return obj;
 }
 
-Callable *Environment::functionForSymbol(Symbol *symbol) {
-  Callable *fun = functionBindings_[symbol];
-  if (!fun) {
+Callable *Environment::functionForSymbol(Symbol *symbol) {  
+  Callable *fun = NULL;
+  if(functionBindings_.count(symbol))
+    fun = functionBindings_[symbol];
+  else {
     if (parent_)
       fun = parent_->functionForSymbol(symbol);
     else

@@ -23,7 +23,13 @@ Function::Function(Object *(*internalFun)(Cons*,Environment*)) : internalFun_(in
 }
 
 Function *Function::print(std::ostream &os) {
-  form_->print(os);
+  if (form_) {
+    form_->print(os);
+  }
+  else if (internalFun_) {
+    os << "#<COMPILED-FUNCTION>";
+  }
+  
   return this;
 }
 
