@@ -76,7 +76,7 @@ int main (int argc, const char * argv[])
   std::stringbuf * buf;  
   std::stringstream ss;
 
-  int lineno = 0;
+  __block int lineno = 0;
   std::cout << "[" << lineno << "]> ";
 
   while (true) {
@@ -99,27 +99,32 @@ int main (int argc, const char * argv[])
     ss << input;
     buf = ss.rdbuf();
     
-    Object *obj = NULL;
+    __block Object *obj = NULL;
     
-    try {
-      obj = read(*buf);
-    }
-    catch (const char *msg) {
-      std::cout << msg;
-    }
+    Mother::instance().deferGC(^Object *{
     
-    if (obj) {
       try {
-        eval(obj, env)->print(std::cout);
-        Mother::instance().markAndSweep();
-      } catch (const char *msg) {        
+        obj = read(*buf);
+      }
+      catch (const char *msg) {
         std::cout << msg;
       }
       
-      std::cout << std::endl;
-      std::cout << "[" << ++lineno << "]> ";
+      if (obj) {
+        try {        
+          Object* evaledObject = eval(obj, env);
+          evaledObject->print(std::cout);          
+        } catch (const char *msg) {        
+          std::cout << msg;
+        }
+        
+        std::cout << std::endl;
+        std::cout << "[" << ++lineno << "]> ";
 
-    }
+      }
+      return NULL;
+    });
+    
   }
   
 	// storing class pointer

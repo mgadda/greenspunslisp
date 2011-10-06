@@ -13,18 +13,25 @@
 
 class Object;
 
-#define MAX_HEAP_SIZE 512
+struct HeapNode {
+  Object *object;
+  size_t size;
+};
 
 class Mother {
 private:
-  static std::vector<Object*> allocated_objects_;
+  std::vector<HeapNode> allocated_objects_;
+  std::vector<HeapNode> delayed_gc_objects_;  
+  size_t heapTriggerSize_;
+  
   static Mother *singleton_;
 
   std::vector<Object*> roots_;
   
-  unsigned int allocation_size_;
+  size_t allocation_size_;
   
-
+  bool deferGC_;
+  
   Mother();
   
 public:
@@ -33,6 +40,11 @@ public:
   
   void addRoot(Object *root);
   static Mother &instance();
+  
+  Object *newObject(size_t size);
+  
+  Object *deferGC(Object *(^block)());
+//  void each(void (^block)(Object *));
 };
 
 #endif

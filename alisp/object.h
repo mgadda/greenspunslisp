@@ -12,9 +12,9 @@
 #include <iostream>
 #include <set>
 
-#define TYPEOF(obj) std::string(((Object*)obj)->type())
-
 class Mother;
+
+#define TYPEOF(obj) std::string(((Object*)obj)->type())
 
 class Object {
 private:
@@ -34,6 +34,10 @@ public:
   // nogc objects still participate in the marking process
   // but they will not be collected during the sweep
   void setNoGC(bool noGC);
+  
+  static void* operator new(size_t size);
+  static void operator delete(void *obj);
+  
 };
 
 
