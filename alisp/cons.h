@@ -35,6 +35,8 @@ public:
   void each(void (^block)(Object *));
   
   size_t length(); 
+  
+  virtual bool mark();
 };
 
 

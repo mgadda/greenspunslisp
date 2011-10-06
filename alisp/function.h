@@ -23,6 +23,7 @@ class Function : public Callable {
   Object *(*internalFun_)(Cons*,Environment*);
   
   // arg list
+  Environment *functionEnv_;
   
 public:
   Function(Object *form, Cons *argNames);
@@ -35,6 +36,8 @@ public:
   // call matches up various parameter types with args (rest, optional, etc)
   // then evals its form in a lexical environment identical to the one
   // in which function was invoked but with these additional lexical bindings
+  
+  virtual bool mark();
 };
 
 #endif

@@ -142,3 +142,15 @@ size_t Cons::length() {
   return length;
 }
 
+bool Cons::mark() {
+  if (Object::mark()) {
+    if (car_)
+      car_->mark();
+    
+    if (cdr_)
+      cdr_->mark();
+    
+    return true;
+  }
+  return false;
+}

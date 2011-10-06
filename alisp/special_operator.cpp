@@ -22,3 +22,13 @@ SpecialOperator *SpecialOperator::print(std::ostream &os) {
 Object *SpecialOperator::call(Cons *args, Environment *env) {  
   return internalFun_(args, env);
 }
+
+bool SpecialOperator::mark() {
+  if (Object::mark()) {
+    if (argNames_)
+      argNames_->mark();
+    
+    return true;
+  }
+  return false;
+}

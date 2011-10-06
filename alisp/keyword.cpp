@@ -18,3 +18,7 @@ Object *Keyword::print(std::ostream &os) {
   os << ":" << name();
   return this;
 }
+
+bool Keyword::mark() {
+  return Object::mark();
+}

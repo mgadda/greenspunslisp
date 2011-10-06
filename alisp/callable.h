@@ -19,6 +19,8 @@ class Callable : public Object {
 public:
   virtual Object *call(Cons *cons, Environment *env)=0;
   Object *operator()(Cons *cons, Environment *env);
+  
+  virtual bool mark()=0;
 };
 
 #endif

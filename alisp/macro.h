@@ -27,6 +27,8 @@ public:
   virtual Macro *print(std::ostream &os);
   
   Object *call(Cons *cons, Environment *env);
+  
+  virtual bool mark();
 };
 
 

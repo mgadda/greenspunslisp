@@ -29,5 +29,7 @@ public:
   virtual SpecialOperator *print(std::ostream &os);
   
   Object *call(Cons *cons, Environment *env);
+  
+  virtual bool mark();
 };
 #endif

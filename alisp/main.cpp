@@ -18,6 +18,7 @@
 
 #include "evaler.h"
 #include "system.h"
+#include "mother.h"
 
 //class Foo {
 //public:
@@ -44,22 +45,33 @@
 int main (int argc, const char * argv[])
 {
   
+  // Setup Mother's roots
+  Mother &mother = Mother::instance();
+  mother.addRoot(&Package::system());
+  mother.addRoot(&Package::common_lisp());
+  mother.addRoot(&Package::common_lisp_user());
+  mother.addRoot(&Package::keyword());
+  
+  Environment *env =  new Environment(NULL);
+  
+  mother.addRoot(env);
+  
+  // Import basic packages
   Package::system().usePackage(Package::keyword());
   Package::common_lisp().usePackage(Package::system());
   Package::common_lisp_user().usePackage(Package::common_lisp());
   
-  // Set up some stuff...
+  // Other necessary symbols for the reader to function
   Symbol *sym = Package::common_lisp().internSymbol("*PACKAGE*");  
   sym->setValue(&Package::common_lisp_user());
+  sym->setNoGC(true);
   Package::common_lisp().exportSymbol(sym->name());
   
-  Symbol::nil();
-  Symbol::t();
-  
-  Environment *env =  new Environment(NULL);
+  // Never collect these symbols
+  Symbol::nil()->setNoGC(true);
+  Symbol::t()->setNoGC(true);
   
   initSystem();
-  
   
   std::stringbuf * buf;  
   std::stringstream ss;
@@ -99,6 +111,7 @@ int main (int argc, const char * argv[])
     if (obj) {
       try {
         eval(obj, env)->print(std::cout);
+        Mother::instance().markAndSweep();
       } catch (const char *msg) {        
         std::cout << msg;
       }

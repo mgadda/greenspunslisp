@@ -53,3 +53,35 @@ Callable *Environment::functionForSymbol(Symbol *symbol) {
   }
   return fun;  
 }
+
+bool Environment::mark() {
+  if (Object::mark()) {
+    if (parent_) {
+      parent_->mark();
+    }
+    
+    std::map<Symbol*,Object*>::iterator symbolIt;
+    for(symbolIt = variableBindings_.begin(); symbolIt != variableBindings_.end(); symbolIt++) {
+
+      Symbol *sym = (Symbol*)((*symbolIt).first);
+      sym->mark();
+
+      Object *obj = (Object*)((*symbolIt).second);
+      obj->mark();
+    }
+    
+    std::map<Symbol*,Callable*>::iterator callableIt;
+    for(callableIt = functionBindings_.begin(); callableIt != functionBindings_.end(); callableIt++) {
+      
+      Symbol *sym = (Symbol*)((*callableIt).first);
+      sym->mark();
+      
+      Callable *fun = (Callable*)((*callableIt).second);
+      fun->mark();
+    }
+    
+
+    return true;
+  }
+  return false;
+}

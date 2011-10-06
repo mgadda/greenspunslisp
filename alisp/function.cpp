@@ -34,10 +34,10 @@ Function *Function::print(std::ostream &os) {
 }
 
 Object *Function::call(Cons *args, Environment *env) {
-  Environment *funEnv = new Environment(env);
+  functionEnv_ = new Environment(env);
   
   if (internalFun_) {
-    return internalFun_(args, funEnv);
+    return internalFun_(args, functionEnv_);
   }
   
   __block Cons *argNamesPtr = argNames_;
@@ -46,7 +46,7 @@ Object *Function::call(Cons *args, Environment *env) {
     args->each(^(Object *arg) {
 
       if (!NILP(argNamesPtr)) {
-        funEnv->bindVariable((Symbol*)argNamesPtr->car(), arg);
+        functionEnv_->bindVariable((Symbol*)argNamesPtr->car(), arg);
         argNamesPtr = (Cons*)argNamesPtr->cdr();
       }
       else {
@@ -60,5 +60,20 @@ Object *Function::call(Cons *args, Environment *env) {
     }
   }
   
-  return eval(form_, funEnv);
+  return eval(form_, functionEnv_);
+}
+
+bool Function::mark() {
+  if (Object::mark()) {
+    if (form_)
+      form_->mark();
+    
+    if (argNames_)
+      argNames_->mark();
+    
+    if (functionEnv_)
+      functionEnv_->mark();
+    return true;
+  }
+  return false;
 }
