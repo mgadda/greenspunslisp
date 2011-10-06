@@ -12,9 +12,9 @@
 #include "object.h"
 #include "mother.h"
 
-Object::Object() : marked_(false), noGC_(false) {
-  Mother::instance().recordAllocation(this);
-}
+//Object::Object() : marked_(false), noGC_(false) {
+//  Mother::instance().recordAllocation(this);
+//}
 
 const char *Object::type() {
   return "OBJECT";
@@ -26,6 +26,7 @@ const char *Object::print() {
   return oss.str().c_str();
 }
 
+/*
 bool Object::mark() {
   if (!marked_) {
     std::cout << "Marking " << print() << std::endl;
@@ -47,3 +48,4 @@ bool Object::marked() {
 void Object::setNoGC(bool noGC) {
   noGC_ = noGC;
 }
+*/
