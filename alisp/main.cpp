@@ -88,8 +88,8 @@ int main (int argc, const char * argv[])
       //c = getc(std::cin);
       c = getchar();
       
-      if (c == '(') nestedCount++;
-      else if (c == ')') nestedCount--;
+      if (c == '(' && input[input.length()-1] != '\\') nestedCount++;
+      else if (c == ')' && input[input.length()-1] != '\\') nestedCount--;
       
       input += c;
       
