@@ -50,7 +50,7 @@
 		7D06A6B31437E7FF0004830B /* callable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = callable.cpp; sourceTree = "<group>"; };
 		7D06A6B51437E96B0004830B /* macro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macro.h; sourceTree = "<group>"; };
 		7D06A6B61437E9980004830B /* macro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = macro.cpp; sourceTree = "<group>"; };
-		7D06A6C5143A89560004830B /* mother.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mother.h; sourceTree = "<group>"; };
+		7D06A6C5143A89560004830B /* mother.h */ = {isa = PBXFileReference; fileEncoding = 4; path = mother.h; sourceTree = "<group>"; };
 		7D06A6C7143A89740004830B /* object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = object.cpp; sourceTree = "<group>"; };
 		7D06A6C9143A8D740004830B /* mother.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mother.cpp; sourceTree = "<group>"; };
 		7D0F500A1432CF7E0041E2D4 /* environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = environment.h; sourceTree = "<group>"; };
