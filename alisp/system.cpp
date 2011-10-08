@@ -45,11 +45,14 @@ void initSystem() {
   bindSymbolToSpecialOperator(system, "SETQ", setq);
   bindSymbolToSpecialOperator(system, "PROGN", progn);
   bindSymbolToSpecialOperator(system, "LET", let);
+  bindSymbolToSpecialOperator(system, "LET*", letStar);
+  bindSymbolToSpecialOperator(system, "IF", If);
   
   // System Functions
   bindSymbolToFunc(system, "LENGTH", length);
   bindSymbolToFunc(system, "CAR", car);
   bindSymbolToFunc(system, "CDR", cdr);
+  bindSymbolToFunc(system, "CONS", cons);
 }
 
 #pragma mark Special Operators
@@ -96,6 +99,97 @@ Object *progn(Cons* args, Environment *env) {
 }
 
 Object *let(Cons *args, Environment *env) {
+  // same as let, but we have to eval all of the binding values
+  // before binding them to their symbols
+  /*
+   (let* ((var1 init-form-1)
+   (var2 init-form-2)
+   ...
+   (varm init-form-m))
+   declaration1
+   declaration2
+   ...
+   declarationp
+   form1
+   form2
+   ...
+   formn)
+   */
+  
+  Environment *letEnv = new Environment(env);
+  
+  // Evaluate binding values  
+  if(args->car()->type() == std::string("CONS")) {
+    Cons* bindings = (Cons*)args->car();
+    
+    Cons* bindingValues = bindings->map(^Object *(Object *obj) {
+      if (obj->type() == std::string("CONS")) { 
+        Cons *binding = (Cons*)obj;
+        size_t len = binding->length();
+        
+        if (len == 0) {
+          throw "NIL is a constant, may not be used as a variable";
+        }
+        else if (len == 1) { // (let (... (a) ...) ...) -> NIL
+          return Symbol::nil();
+        }
+        else if (len == 2) { // (let (... (a 10) ...) ...) -> eval(10)
+          if (binding->car()->type() != std::string("SYMBOL"))
+            throw "LET: illegal variable specification";
+          return eval(((Cons*)binding->cdr())->car(), env);
+        }
+        else {
+          throw "LET: illegal variable specification";
+        }
+        
+      }
+      else // (let (... a ...) ...) -> NIL
+        return Symbol::nil();
+    });
+    
+    __block Cons* bindingValuesPtr = bindingValues;
+    
+    // Bind values to symbols
+    bindings->each(^(Object *obj) {
+      
+      if (obj->type() == std::string("CONS")) { 
+        
+        // (let ((a)) ...) OR (let ((a 10)) ...)
+        
+        Cons *binding = (Cons*)obj;
+        size_t len = binding->length();
+        
+        if (len == 0) {
+          throw "NIL is a constant, may not be used as a variable";
+        }
+        else if (len == 1) { // (let (... (a) ...) ...) 
+          letEnv->bindVariable((Symbol*)binding->car(), bindingValuesPtr->car());
+        }
+        else if (len == 2) { // (let (... (a 10) ...) ...)
+          if (binding->car()->type() != std::string("SYMBOL"))
+            throw "LET: illegal variable specification";
+          letEnv->bindVariable((Symbol*)binding->car(), bindingValuesPtr->car());
+        }
+        else {
+          throw "LET: illegal variable specification";
+        }
+      }
+      else { 
+        // (let (... a ...) ...)
+        if (obj->type() != std::string("SYMBOL"))
+          throw "LET: illegal variable specification";
+        letEnv->bindVariable((Symbol*)obj, bindingValuesPtr->car());        
+      }
+      
+      bindingValuesPtr = (Cons*)bindingValuesPtr->cdr();
+    });
+  }
+  
+  return progn((Cons*)args->cdr(), letEnv);
+  
+}
+
+Object *letStar(Cons *args, Environment *env) {
   /*
    (let* ((var1 init-form-1)
           (var2 init-form-2)
@@ -113,6 +207,7 @@ Object *let(Cons *args, Environment *env) {
   
   Environment *letEnv = new Environment(env);
   
+  // Evaluate and bind
   if(args->car()->type() == std::string("CONS")) {
     Cons* bindings = (Cons*)args->car();
     bindings->each(^(Object *obj) {
@@ -132,7 +227,7 @@ Object *let(Cons *args, Environment *env) {
         else if (len == 2) { // (let (... (a 10) ...) ...)
           if (binding->car()->type() != std::string("SYMBOL"))
             throw "LET: illegal variable specification";
-          letEnv->bindVariable((Symbol*)binding->car(), eval(((Cons*)binding->cdr())->car(), env));
+          letEnv->bindVariable((Symbol*)binding->car(), eval(((Cons*)binding->cdr())->car(), letEnv));
         }
         else {
           throw "LET: illegal variable specification";
@@ -150,6 +245,23 @@ Object *let(Cons *args, Environment *env) {
   return progn((Cons*)args->cdr(), letEnv);
 }
 
+Object *If(Cons *args, Environment *env) {
+
+  if (args->length() < 2) {
+    throw "too few parameters for special operator IF:";
+  }
+  Object *testFormValue = eval(args->car(), env);
+  if (testFormValue != Symbol::nil()) {
+    return eval((*args)[1], env);
+  }
+  else {
+    if (args->length() == 3) {      
+      return eval((*args)[2], env);
+    }
+    else
+      return Symbol::nil();
+  }
+}
 
 #pragma mark System Functions
 
@@ -183,4 +295,13 @@ Object *cdr(Cons* args, Environment *env) {
     throw errMsg;
   }
   return ((Cons*)list)->cdr();
+}
+
+Object *cons(Cons* args, Environment *env) {
+  if (args->length() > 2)
+    throw "too many arguments given to CONS:";
+  if (args->length() < 2)
+    throw "too few arguments given to CONS:";
+  
+  return new Cons((*args)[0], (*args)[1]);
 }

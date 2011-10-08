@@ -38,7 +38,7 @@ Object *Cons::print(std::ostream &os) {
     cons = (Cons*)cons->cdr();
   }
   
-  if(strcmp(cons->type(), "SYMBOL") == 0 && (Symbol*)cons != Symbol::nil()) { 
+  if(strcmp(cons->type(), "CONS") != 0 && (Symbol*)cons != Symbol::nil()) { 
     os << " . ";
     cons->print(os);
   }
@@ -153,4 +153,12 @@ bool Cons::mark() {
     return true;
   }
   return false;
+}
+
+Object* Cons::operator[](size_t index) {
+  index %= length();
+  
+  Cons* ptr = this;
+  for(size_t i=0; i<index; ptr = (Cons*)ptr->cdr(), i++);
+  return ptr->car();
 }
