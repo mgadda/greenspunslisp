@@ -58,7 +58,17 @@ Object *quote(Cons* args, Environment *env) {
   if (args->length() > 1) {
     throw "too many arguments for special operator QUOTE:";
   }
-  return args->car();
+  Object *first = args->car();
+  if (first->type() == std::string("CONS")) {
+    Cons* list = (Cons*)args->car();
+      
+    if (NILP(list->car()) && NILP(list->cdr())) {
+      return Symbol::nil();
+    }
+
+  }
+
+  return first;
 }
 
 Object *setq(Cons* args, Environment *env) {
