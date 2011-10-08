@@ -43,6 +43,8 @@ void initSystem() {
   // Special Operators
   bindSymbolToSpecialOperator(system, "QUOTE", quote);
   bindSymbolToSpecialOperator(system, "SETQ", setq);
+  bindSymbolToSpecialOperator(system, "PROGN", progn);
+  bindSymbolToSpecialOperator(system, "LET", let);
   
   // System Functions
   bindSymbolToFunc(system, "LENGTH", length);
@@ -74,6 +76,70 @@ Object *setq(Cons* args, Environment *env) {
   // bind first to eval of second
   return env->bindVariable(symbol, eval(value, env));
 }
+
+Object *progn(Cons* args, Environment *env) {
+  __block Object *last = Symbol::nil();
+  args->each(^(Object *obj) {
+    last = eval(obj, env);
+  });
+  return last;
+}
+
+Object *let(Cons *args, Environment *env) {
+  /*
+   (let* ((var1 init-form-1)
+          (var2 init-form-2)
+          ...
+          (varm init-form-m))
+     declaration1
+     declaration2
+     ...
+     declarationp
+     form1
+     form2
+     ...
+     formn)
+   */
+  
+  Environment *letEnv = new Environment(env);
+  
+  if(args->car()->type() == std::string("CONS")) {
+    Cons* bindings = (Cons*)args->car();
+    bindings->each(^(Object *obj) {
+      if (obj->type() == std::string("CONS")) { 
+        
+        // (let ((a)) ...) OR (let ((a 10)) ...)
+        
+        Cons *binding = (Cons*)obj;
+        size_t len = binding->length();
+        
+        if (len == 0) {
+          throw "NIL is a constant, may not be used as a variable";
+        }
+        else if (len == 1) { // (let (... (a) ...) ...) 
+          letEnv->bindVariable((Symbol*)binding->car(), Symbol::nil());
+        }
+        else if (len == 2) { // (let (... (a 10) ...) ...)
+          if (binding->car()->type() != std::string("SYMBOL"))
+            throw "LET: illegal variable specification";
+          letEnv->bindVariable((Symbol*)binding->car(), eval(((Cons*)binding->cdr())->car(), env));
+        }
+        else {
+          throw "LET: illegal variable specification";
+        }
+      }
+      else { 
+        // (let (... a ...) ...)
+        if (obj->type() != std::string("SYMBOL"))
+          throw "LET: illegal variable specification";
+        letEnv->bindVariable((Symbol*)obj, Symbol::nil());        
+      }
+    });
+  }
+  
+  return progn((Cons*)args->cdr(), letEnv);
+}
+
 
 #pragma mark System Functions
 

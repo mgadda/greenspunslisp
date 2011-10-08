@@ -22,7 +22,10 @@ void initSystem();
 
 Object *quote(Cons* args, Environment *env);
 Object *setq(Cons* args, Environment *env);
+Object *progn(Cons* args, Environment *env);
+Object *let(Cons *args, Environment *env);
 
+#pragma mark System Functions
 Object *length(Cons* args, Environment *env);
 Object *car(Cons* args, Environment *env);
 Object *cdr(Cons* args, Environment *env);
