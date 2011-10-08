@@ -215,6 +215,8 @@ namespace  {
         throw "invalid integer specification"; // TODO: handle this case properly
     }
 
+    pcre_free(intRegex);
+    
     Package *package = NULL;
     
     // TODO: add number/symbol detection and return correct type of Object
