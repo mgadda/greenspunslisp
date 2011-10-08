@@ -99,6 +99,12 @@ namespace  {
     return cons;
   }
 
+  Object *function(Object *exp) {
+    Cons *cons = new Cons(Package::system().internSymbol("FUNCTION"));
+    cons->setCdr(new Cons(exp,Symbol::nil()));
+    
+    return cons;    
+  }
   // (lambda (x y) x)
   Object *readerMacro(char c, std::streambuf &buf) {
     Cons *cons = NULL;
@@ -143,6 +149,20 @@ namespace  {
           // unquote
           return unquote(read(buf));
         }
+      case '#':
+        // TODO: dispatch to appropriate macro handler based on whatever
+        // character follows. See 2.4.8.
+        if(buf.sgetc() == '\'') {
+          buf.sbumpc();
+          return function(read(buf));
+        }
+//        else if(buf.sgetc() == '|') { // reader comment #| anything goes here |#
+//          char a,b;
+//          while (a != '|' || b != '#') {
+//            a = b;
+//            b = buf.sbumpc();
+//          }
+//        }
       case ')':
       default:
         break;
@@ -166,7 +186,7 @@ namespace  {
       switch (syntax_type_for_char[y]) {
         case constituent:
         case non_terminating_macro_character:
-          token += y;
+          token += toupper(y); // TODO: make this conditional based on *print-case* or some other variable
           break;
         case single_escape:
           z = buf.sbumpc();
@@ -174,6 +194,7 @@ namespace  {
           token += z;
           break;
         case multiple_escape:
+          done = true;
           break;
         case terminating_macro_character:
         case whitespace:
@@ -313,11 +334,12 @@ Object *read(std::streambuf &buf) {
         //   0000
         //   == 0
         
-        if ((character_traits_for_char[y] & alphabetic) && !(character_traits_for_char[y] & alphabetic)) {
-          token.erase();
-          token = y;
-          token = readToken(token, buf);
-        }
+        //if ((character_traits_for_char[y] & alphabetic) && !(character_traits_for_char[y] & ~alphabetic)) {
+        token.erase();
+        token = y;
+        token = readToken(token, buf); // step 8
+        return makeObjectForToken(token);
+        //}
 				break;
 			case multiple_escape:	// 6.	
                             // TODO: goto step 9, making amends
