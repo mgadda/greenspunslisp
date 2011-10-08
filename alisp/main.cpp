@@ -101,6 +101,8 @@ int main (int argc, const char * argv[])
     
     __block Object *obj = NULL;
     
+    // We set aside any allocations while evaluating something so that they're
+    // not collected until after the evaluation is complete.
     Mother::instance().deferGC(^Object *{
     
       try {
