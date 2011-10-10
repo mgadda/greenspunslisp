@@ -28,6 +28,7 @@ public:
   
   Object *bindVariable(Symbol* symbol, Object* variable);
   Callable *bindFunction(Symbol* symbol, Callable* function);
+  void unbindVariable(Symbol* symbol);
   
   Object *variableForSymbol(Symbol *symbol);
   Callable *functionForSymbol(Symbol *symbol);

@@ -277,8 +277,6 @@ Object *block(Cons *args, Environment *env) {
   
   Symbol* blockName = (Symbol*)(*args)[0];
   
-  Environment *blockEnv = new Environment(env);
-
   __block Object* returnValFromBlock = NULL;
   
   jmp_buf jmp_env;
@@ -287,11 +285,13 @@ Object *block(Cons *args, Environment *env) {
     Continuation *c = new Continuation(jmp_env, ^void (Object *obj, Environment *env) {
       returnValFromBlock = obj;
     });  
-    blockEnv->bindVariable(blockName, c);
+    env->bindVariable(blockName, c);
         
-    return progn((Cons*)args->cdr(), blockEnv);
+    returnValFromBlock = progn((Cons*)args->cdr(), env);
   }
 
+  env->unbindVariable(blockName);
+  
   return returnValFromBlock;
   
 }

@@ -28,6 +28,10 @@ Callable *Environment::bindFunction(Symbol* symbol, Callable* function) {
   return functionBindings_[symbol] = function;  
 }
 
+void Environment::unbindVariable(Symbol* symbol) {
+  variableBindings_.erase(symbol);
+}
+
 Object *Environment::variableForSymbol(Symbol *symbol) {
   Object *obj = NULL;
   if (variableBindings_.count(symbol))
