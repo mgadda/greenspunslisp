@@ -52,12 +52,17 @@ void initSystem() {
   bindSymbolToSpecialOperator(system, "IF", If);
   bindSymbolToSpecialOperator(system, "BLOCK", block);
   bindSymbolToSpecialOperator(system, "RETURN-FROM", returnFrom);
+  bindSymbolToSpecialOperator(system, "FUNCTION", function);
+  bindSymbolToSpecialOperator(system, "LAMBDA", lambda);
   
   // System Functions
   bindSymbolToFunc(system, "LENGTH", length);
   bindSymbolToFunc(system, "CAR", car);
   bindSymbolToFunc(system, "CDR", cdr);
   bindSymbolToFunc(system, "CONS", cons);
+//  bindSymbolToFunc(system, "BACKQUOTE", backquote);
+//  bindSymbolToFunc(system, "UNQUOTE", unquote);
+//  bindSymbolToFunc(system, "SPLICE", splice);
 }
 
 #pragma mark Special Operators
@@ -323,10 +328,43 @@ Object *returnFrom(Cons *args, Environment *env) {
   return Symbol::nil(); // we'll never reach this point unless longjmp fails
 }
 
+Object *function(Cons *args, Environment *env) {
+  Object *first = args->car();
+  
+  if (first->type() == std::string("SYMBOL")) {
+    Callable *fun = (Callable*)env->functionForSymbol((Symbol*)first);
+    if (!fun || fun->type() != std::string("FUNCTION")) {
+      throw "FUNCTION: undefined function ____";
+    }
+    return fun;
+  }
+  else if (first->type() == std::string("CONS")) {
+    // close over lambda expression
+    Environment *funEnv = new Environment(env);
+    return eval(first, funEnv);  
+  }
+  else {
+    throw "FUNCTION: ____ is not a function name; try using a symbol instead";
+  }
+}
+
+Object *lambda(Cons *args, Environment *env) {
+  size_t len = args->length();
+
+  Object *form, *lambdaList;
+
+  lambdaList = (*args)[0];
+  form = (*args)[1];
+  
+  return new Function(form, (Cons*)lambdaList);
+}
+
 #pragma mark System Functions
 
 Object *length(Cons* args, Environment *env) {
-  return new Integer((int)args->length());
+  Cons *list = (Cons*)args->car();
+  Integer *integer = new Integer((int)list->length());
+  return integer;
 }
 
 Object *car(Cons* args, Environment *env) {

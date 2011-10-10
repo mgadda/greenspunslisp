@@ -34,7 +34,7 @@ Function *Function::print(std::ostream &os) {
 }
 
 Object *Function::call(Cons *args, Environment *env) {
-  functionEnv_ = new Environment(env);
+  functionEnv_ = env; //new Environment(env);
   
   if (internalFun_) {
     return internalFun_(args, functionEnv_);
