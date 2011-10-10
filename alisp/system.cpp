@@ -17,6 +17,7 @@
 #include "environment.h"
 #include "data_types.h"
 #include "function.h"
+#include "continuation.h"
 
 extern Object *eval(Object* obj, Environment *env);
 
@@ -266,33 +267,6 @@ Object *If(Cons *args, Environment *env) {
       return Symbol::nil();
   }
 }
-
-class Continuation : public Callable {
-private:
-  void (^block_)(Object *obj, Environment *env);
-  jmp_buf &jmp_env_;
-  
-public:
-  Continuation(jmp_buf &jmp_env, void (^block)(Object *obj, Environment *env)) : block_(block), jmp_env_(jmp_env) {}
-  
-  virtual Object *call(Cons *cons, Environment *env) {
-    call(cons, env);
-    return NULL; // we'll never reach this line
-  }
-
-  void call(Object *obj, Environment *env) {
-    block_(obj, env);
-    longjmp(jmp_env_, 1);
-  }
-  
-  virtual Object *print(std::ostream &os) {
-    os << "#<CONTINUATION>";
-    return this;
-  }
-  
-  virtual const char *type() { return "CONTINUATION"; }
-
-};
 
 Object *block(Cons *args, Environment *env) {
   if (args->length() == 0)
