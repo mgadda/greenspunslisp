@@ -22,10 +22,18 @@ void initSystem();
 
 Object *quote(Cons* args, Environment *env);
 Object *setq(Cons* args, Environment *env);
+Object *progn(Cons* args, Environment *env);
+Object *let(Cons *args, Environment *env);
+Object *letStar(Cons *args, Environment *env);
+Object *If(Cons *args, Environment *env);
+Object *block(Cons *args, Environment *env);
+Object *returnFrom(Cons *args, Environment *env);
 
+#pragma mark System Functions
 Object *length(Cons* args, Environment *env);
 Object *car(Cons* args, Environment *env);
 Object *cdr(Cons* args, Environment *env);
+Object *cons(Cons* args, Environment *env);
 
 namespace {
   void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*));

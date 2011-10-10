@@ -76,22 +76,21 @@ void Symbol::setValue(Object *value) { value_ = value; }
 Callable *Symbol::function() { return function_; }
 void Symbol::setFunction(Callable *function) { function_ = function; }
 
+bool Symbol::mark() {
+  if (Object::mark()) {
+    if (package_)
+      package_->mark();
+    
+    if (value_)
+      value_->mark();
+    
+    if (function_)
+      function_->mark();
 
-//Symbol *Symbol::symbolWithStringInPackage(std::string name, Package &package) {
-//  // TODO: replace this with proper symbol lookup
-//  // if symbol has home package, look there first
-//  // look for symbol name in specified package (presumed to be current)
-//  // then look for symbol in other packages?
-//  // failing that, create new symbol in specified package (presumed to be current)
-//
-//  if (name == "NIL" || name == "nil") {
-//    return Symbol::nil();
-//  }
-//  else if (name == "T" || name == "t") {
-//    return Symbol::t();
-//  }
-//  else {
-//    // intern new symbols
-//    return package.registerSymbol(new Symbol(name));
-//  }
-//}
+    if (propertyList_)
+      propertyList_->mark();
+    
+    return true;
+  }
+  return false;
+}

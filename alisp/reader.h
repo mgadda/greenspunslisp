@@ -25,6 +25,7 @@ namespace  {
   Object *backquote(Object *exp);
   Object *unquote(Object *exp);
   Object *splice(Object *exp);
+  Object *function(Object *exp);
   
   Object *readerMacro(char c, std::streambuf &buf);
   void unread(char c, std::streambuf &buf);

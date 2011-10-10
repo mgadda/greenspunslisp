@@ -137,6 +137,25 @@ Object *Package::print(std::ostream &os) {
   return this;
 }
 
+bool Package::mark() {
+  if(Object::mark()) {
+    std::map<std::string, Symbol*>::iterator symbolIt;
+    for(symbolIt = symbols_.begin(); symbolIt != symbols_.end(); symbolIt++) {
+      
+      Symbol *sym = (Symbol*)((*symbolIt).second);
+      sym->mark();
+    }
+    
+    std::set<Package*>::iterator packageIt;
+    for(packageIt = parents_.begin(); packageIt != parents_.end(); packageIt++) {
+      Package *package = (Package*)(*packageIt);
+      package->mark();
+    }
+    return true;
+  }  
+  return false;
+}
+
 #pragma mark Default Packages
 
 Package Package::system_("SYSTEM");

@@ -17,6 +17,8 @@ public:
   Keyword(std::string name);
   
   virtual Object *print(std::ostream &os);
+  
+  virtual bool mark();
 };
 
 #endif

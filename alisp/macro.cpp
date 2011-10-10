@@ -23,3 +23,13 @@ Object *Macro::call(Cons *args, Environment *env) {
   // TODO: implement macros
   return Symbol::nil();
 }
+
+bool Macro::mark() {
+  if (Object::mark()) {
+    if (argNames_)
+      argNames_->mark();
+    
+    return true;
+  }
+  return false;
+}

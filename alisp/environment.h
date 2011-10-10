@@ -31,6 +31,8 @@ public:
   
   Object *variableForSymbol(Symbol *symbol);
   Callable *functionForSymbol(Symbol *symbol);
+  
+  virtual bool mark();
 };
 
 #endif

@@ -12,9 +12,8 @@
 #include "object.h"
 #include "mother.h"
 
-//Object::Object() : marked_(false), noGC_(false) {
-//  Mother::instance().recordAllocation(this);
-//}
+Object::Object() : marked_(false), noGC_(false) {
+}
 
 const char *Object::type() {
   return "OBJECT";
@@ -26,7 +25,6 @@ const char *Object::print() {
   return oss.str().c_str();
 }
 
-/*
 bool Object::mark() {
   if (!marked_) {
     std::cout << "Marking " << print() << std::endl;
@@ -48,4 +46,15 @@ bool Object::marked() {
 void Object::setNoGC(bool noGC) {
   noGC_ = noGC;
 }
-*/
+
+void* Object::operator new(size_t size) {
+  std::cout << "allocated " << size << " bytes." << std::endl;  
+  return (void*)Mother::instance().newObject(size);
+}
+
+void Object::operator delete(void *obj) {
+  // noop because deallocation is handled by Mother through free()
+  // downside? class destructor not invoked automatically, can Mother do this?
+  __noop;
+  //free(obj); 
+}

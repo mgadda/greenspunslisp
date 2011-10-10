@@ -35,6 +35,11 @@ public:
   void each(void (^block)(Object *));
   
   size_t length(); 
+  
+  virtual bool mark();
+
+  // Allows O(n) access to regular lists (those ending with NIL)
+  Object* operator[](size_t index);
 };
 
 

@@ -52,6 +52,7 @@ public:
   static Symbol *nil();  
   static Symbol *t();
   
+  virtual bool mark();  
 };
 
 #endif

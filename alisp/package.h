@@ -71,6 +71,7 @@ public:
   
   static Keyword *keywordForName(std::string name);
   
+  virtual bool mark();
 };
 
 

@@ -18,6 +18,7 @@
 
 #include "evaler.h"
 #include "system.h"
+#include "mother.h"
 
 //class Foo {
 //public:
@@ -44,27 +45,38 @@
 int main (int argc, const char * argv[])
 {
   
+  // Setup Mother's roots
+  Mother &mother = Mother::instance();
+  mother.addRoot(&Package::system());
+  mother.addRoot(&Package::common_lisp());
+  mother.addRoot(&Package::common_lisp_user());
+  mother.addRoot(&Package::keyword());
+  
+  Environment *env =  new Environment(NULL);
+  
+  mother.addRoot(env);
+  
+  // Import basic packages
   Package::system().usePackage(Package::keyword());
   Package::common_lisp().usePackage(Package::system());
   Package::common_lisp_user().usePackage(Package::common_lisp());
   
-  // Set up some stuff...
+  // Other necessary symbols for the reader to function
   Symbol *sym = Package::common_lisp().internSymbol("*PACKAGE*");  
   sym->setValue(&Package::common_lisp_user());
+  sym->setNoGC(true);
   Package::common_lisp().exportSymbol(sym->name());
   
-  Symbol::nil();
-  Symbol::t();
-  
-  Environment *env =  new Environment(NULL);
+  // Never collect these symbols
+  Symbol::nil()->setNoGC(true);
+  Symbol::t()->setNoGC(true);
   
   initSystem();
-  
   
   std::stringbuf * buf;  
   std::stringstream ss;
 
-  int lineno = 0;
+  __block int lineno = 0;
   std::cout << "[" << lineno << "]> ";
 
   while (true) {
@@ -76,8 +88,8 @@ int main (int argc, const char * argv[])
       //c = getc(std::cin);
       c = getchar();
       
-      if (c == '(') nestedCount++;
-      else if (c == ')') nestedCount--;
+      if (c == '(' && input[input.length()-1] != '\\') nestedCount++;
+      else if (c == ')' && input[input.length()-1] != '\\') nestedCount--;
       
       input += c;
       
@@ -87,26 +99,34 @@ int main (int argc, const char * argv[])
     ss << input;
     buf = ss.rdbuf();
     
-    Object *obj = NULL;
+    __block Object *obj = NULL;
     
-    try {
-      obj = read(*buf);
-    }
-    catch (const char *msg) {
-      std::cout << msg;
-    }
+    // We set aside any allocations while evaluating something so that they're
+    // not collected until after the evaluation is complete.
+    Mother::instance().deferGC(^Object *{
     
-    if (obj) {
       try {
-        eval(obj, env)->print(std::cout);
-      } catch (const char *msg) {        
+        obj = read(*buf);
+      }
+      catch (const char *msg) {
         std::cout << msg;
       }
       
-      std::cout << std::endl;
-      std::cout << "[" << ++lineno << "]> ";
+      if (obj) {
+        try {        
+          Object* evaledObject = eval(obj, env);
+          evaledObject->print(std::cout);          
+        } catch (const char *msg) {        
+          std::cout << msg;
+        }
+        
+        std::cout << std::endl;
+        std::cout << "[" << ++lineno << "]> ";
 
-    }
+      }
+      return NULL;
+    });
+    
   }
   
 	// storing class pointer
