@@ -27,7 +27,9 @@ const char *Object::print() {
 
 bool Object::mark() {
   if (!marked_) {
+#ifdef DEBUG_MOTHER    
     std::cout << "Marking " << print() << std::endl;
+#endif
     marked_ = true;
     return true;
   }
@@ -35,7 +37,9 @@ bool Object::mark() {
 }
 
 void Object::clearMark() {
+#ifdef DEBUG_MOTHER  
   std::cout << "Clearing mark on " << print() << std::endl;
+#endif
   marked_ = false;
 }
 
@@ -48,7 +52,9 @@ void Object::setNoGC(bool noGC) {
 }
 
 void* Object::operator new(size_t size) {
-  std::cout << "allocated " << size << " bytes." << std::endl;  
+#ifdef DEBUG_MOTHER
+  std::cout << "allocated " << size << " bytes." << std::endl;
+#endif
   return (void*)Mother::instance().newObject(size);
 }
 

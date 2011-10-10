@@ -43,8 +43,10 @@ Object *Mother::newObject(size_t size) {
     allocated_objects_.push_back(hnode);  
   
   allocation_size_ += size;
+#ifdef DEBUG_MOTHER  
   std::cout << allocation_size_ << "/" << heapTriggerSize_ <<  std::endl;
-
+#endif
+  
   if (allocation_size_ > heapTriggerSize_) {
     markAndSweep();
     if (allocation_size_ >= heapTriggerSize_*.9) {
@@ -65,9 +67,10 @@ void Mother::markAndSweep() {
     Object *obj = NULL;
 
     // mark
+#ifdef DEBUG_MOTHER    
     std::cout << "Marking...." << std::endl;
     std::cout << roots_.size() << " roots" << std::endl;
-
+#endif
     std::vector<Object*>::iterator rootIt;
 
     for(rootIt = roots_.begin(); rootIt != roots_.end(); rootIt++) {
@@ -76,7 +79,9 @@ void Mother::markAndSweep() {
     }
     
     // sweep
+#ifdef DEBUG_MOTHER    
     std::cout << "Sweeping...." << std::endl;
+#endif
     std::vector<HeapNode>::iterator it;    
     it = allocated_objects_.begin();
     while(it != allocated_objects_.end()) {
@@ -85,8 +90,9 @@ void Mother::markAndSweep() {
       if (!obj->marked() && it != allocated_objects_.end()) {
 
         allocation_size_ -= (*it).size;
+#ifdef DEBUG_MOTHER        
         std::cout << allocation_size_ << std::endl;
-
+#endif
         allocated_objects_.erase(it);
 
         //std::cout << "Deleting " << obj->print() << std::endl;

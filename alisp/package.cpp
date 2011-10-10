@@ -79,7 +79,9 @@ Symbol *Package::resolveExternSymbol(std::string name) {
 Symbol *Package::internSymbol(std::string name) {  
   if (!resolveInternSymbol(name) && !resolveExternSymbol(name)) {
     symbols_[name] = new Symbol(name);
+#ifdef DEBUG_MOTHER    
     std::cout << "Interning new symbol " << name << "=" << (long)symbols_[name] << std::endl;
+#endif
     symbols_[name]->setPackage(this);
   }  
   return symbols_[name];
