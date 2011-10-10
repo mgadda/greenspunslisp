@@ -20,6 +20,7 @@
 		7D35FE77142DAC5200A59B17 /* data_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE76142DAC5200A59B17 /* data_types.cpp */; };
 		7D35FE7A142EED6300A59B17 /* package.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE79142EED6300A59B17 /* package.cpp */; };
 		7D35FE7E142F837F00A59B17 /* symbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35FE7D142F837F00A59B17 /* symbol.cpp */; };
+		7D3C2E3A14426F4F00F83C8D /* continuation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D3C2E3914426F4F00F83C8D /* continuation.cpp */; };
 		7D6EEE04142FA669003DDA6C /* printer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D6EEE03142FA669003DDA6C /* printer.cpp */; };
 		7D6EEE0914302956003DDA6C /* cons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D6EEE0814302956003DDA6C /* cons.cpp */; };
 		7D774CDB14318BD500C14CC8 /* keyword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D774CDA14318BD500C14CC8 /* keyword.cpp */; };
@@ -69,6 +70,8 @@
 		7D35FE7B142EF4E800A59B17 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
 		7D35FE7C142F7D5B00A59B17 /* symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symbol.h; sourceTree = "<group>"; };
 		7D35FE7D142F837F00A59B17 /* symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = symbol.cpp; sourceTree = "<group>"; };
+		7D3C2E3714426F4100F83C8D /* continuation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = continuation.h; sourceTree = "<group>"; };
+		7D3C2E3914426F4F00F83C8D /* continuation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = continuation.cpp; sourceTree = "<group>"; };
 		7D6EEE03142FA669003DDA6C /* printer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printer.cpp; sourceTree = "<group>"; };
 		7D6EEE06142FA671003DDA6C /* printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer.h; sourceTree = "<group>"; };
 		7D6EEE071430291D003DDA6C /* cons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cons.h; sourceTree = "<group>"; };
@@ -105,6 +108,8 @@
 				7D06A6B31437E7FF0004830B /* callable.cpp */,
 				7D06A6B51437E96B0004830B /* macro.h */,
 				7D06A6B61437E9980004830B /* macro.cpp */,
+				7D3C2E3714426F4100F83C8D /* continuation.h */,
+				7D3C2E3914426F4F00F83C8D /* continuation.cpp */,
 			);
 			name = Callable;
 			sourceTree = "<group>";
@@ -232,6 +237,7 @@
 				7D06A6B71437E9980004830B /* macro.cpp in Sources */,
 				7D06A6C8143A89740004830B /* object.cpp in Sources */,
 				7D06A6CA143A8D740004830B /* mother.cpp in Sources */,
+				7D3C2E3A14426F4F00F83C8D /* continuation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
