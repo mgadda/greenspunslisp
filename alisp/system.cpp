@@ -7,6 +7,8 @@
 //
 
 #include <iostream>
+#include <setjmp.h>
+
 #include "system.h"
 #include "package.h"
 #include "symbol.h"
@@ -47,6 +49,8 @@ void initSystem() {
   bindSymbolToSpecialOperator(system, "LET", let);
   bindSymbolToSpecialOperator(system, "LET*", letStar);
   bindSymbolToSpecialOperator(system, "IF", If);
+  bindSymbolToSpecialOperator(system, "BLOCK", block);
+  bindSymbolToSpecialOperator(system, "RETURN-FROM", returnFrom);
   
   // System Functions
   bindSymbolToFunc(system, "LENGTH", length);
@@ -248,7 +252,7 @@ Object *letStar(Cons *args, Environment *env) {
 Object *If(Cons *args, Environment *env) {
 
   if (args->length() < 2) {
-    throw "too few parameters for special operator IF:";
+    throw "EVAL: too few parameters for special operator IF:";
   }
   Object *testFormValue = eval(args->car(), env);
   if (testFormValue != Symbol::nil()) {
@@ -261,6 +265,88 @@ Object *If(Cons *args, Environment *env) {
     else
       return Symbol::nil();
   }
+}
+
+class Continuation : public Callable {
+private:
+  void (^block_)(Object *obj, Environment *env);
+  jmp_buf &jmp_env_;
+  
+public:
+  Continuation(jmp_buf &jmp_env, void (^block)(Object *obj, Environment *env)) : block_(block), jmp_env_(jmp_env) {}
+  
+  virtual Object *call(Cons *cons, Environment *env) {
+    call(cons, env);
+    return NULL; // we'll never reach this line
+  }
+
+  void call(Object *obj, Environment *env) {
+    block_(obj, env);
+    longjmp(jmp_env_, 1);
+  }
+  
+  virtual Object *print(std::ostream &os) {
+    os << "#<CONTINUATION>";
+    return this;
+  }
+  
+  virtual const char *type() { return "CONTINUATION"; }
+
+};
+
+Object *block(Cons *args, Environment *env) {
+  if (args->length() == 0)
+    throw "EVAL: too few parameters for special operator BLOCK:";
+
+  if ((*args)[0]->type() != std::string("SYMBOL"))
+    throw "BLOCK: __ is not a symbol";
+  
+  Symbol* blockName = (Symbol*)(*args)[0];
+  
+  Environment *blockEnv = new Environment(env);
+
+  __block Object* returnValFromBlock = NULL;
+  
+  jmp_buf jmp_env;
+  if (setjmp(jmp_env) == 0) {
+    
+    Continuation *c = new Continuation(jmp_env, ^void (Object *obj, Environment *env) {
+      returnValFromBlock = obj;
+    });  
+    blockEnv->bindVariable(blockName, c);
+        
+    return progn((Cons*)args->cdr(), blockEnv);
+  }
+
+  return returnValFromBlock;
+  
+}
+
+Object *returnFrom(Cons *args, Environment *env) {
+  size_t len = args->length();
+  
+  if (len == 0)
+    throw "block name missing";
+  
+  if (len > 2) {
+    throw "EVAL: too many parameters for special operator RETURN-FROM:";
+  }
+  
+  Object *first = args->car();
+  
+  if (first->type() != std::string("SYMBOL")) {
+    throw "RETURN-FROM: ___ is not a symbol";
+  }
+  
+  Continuation *c = (Continuation*)(env->variableForSymbol((Symbol*)first));
+  
+  // we don't return from here, because continuation switches contexts
+  if (len == 1)
+    c->call(Symbol::nil(), env);
+  else
+    c->call((*args)[1], env); 
+  
+  return Symbol::nil(); // we'll never reach this point unless longjmp fails
 }
 
 #pragma mark System Functions

@@ -26,6 +26,8 @@ Object *progn(Cons* args, Environment *env);
 Object *let(Cons *args, Environment *env);
 Object *letStar(Cons *args, Environment *env);
 Object *If(Cons *args, Environment *env);
+Object *block(Cons *args, Environment *env);
+Object *returnFrom(Cons *args, Environment *env);
 
 #pragma mark System Functions
 Object *length(Cons* args, Environment *env);
