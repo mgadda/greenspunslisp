@@ -18,7 +18,7 @@
 
 Mother *Mother::singleton_ = NULL;
 
-Mother::Mother() : allocation_size_(0), deferGC_(false), heapTriggerSize_(1024) {
+Mother::Mother() : allocation_size_(0), deferGC_(false), heapTriggerSize_(2048) {
 }
 
 Mother &Mother::instance() {
