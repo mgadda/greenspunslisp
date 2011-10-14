@@ -20,31 +20,8 @@
 #include "system.h"
 #include "mother.h"
 
-//class Foo {
-//public:
-//	int print(int);
-//};
-//
-//int Foo::print(int in) {
-//	return 5;
-//}
-//
-//int print(int in);
-//
-//int print(int in) {
-//	return in;
-//}
-
-//Symbol *f = Package::common_lisp().internSymbol("foo");
-//env->bindVariable(f, Symbol::nil());
-
-//Environment *env2 =  new Environment(env);
-
-//env2->variableForSymbol(f)->print(std::cout);
-
 int main (int argc, const char * argv[])
 {
-  
   // Setup Mother's roots
   Mother &mother = Mother::instance();
   mother.addRoot(&Package::system());
@@ -55,7 +32,7 @@ int main (int argc, const char * argv[])
   Environment *env =  new Environment(NULL);
   
   mother.addRoot(env);
-  
+
   // Import basic packages
   Package::system().usePackage(Package::keyword());
   Package::common_lisp().usePackage(Package::system());
@@ -128,29 +105,6 @@ int main (int argc, const char * argv[])
     });
     
   }
-  
-	// storing class pointer
-//	int (Foo::*func)(int) = &Foo::print;
-//	
-//	Foo *foo = new Foo();
-//	
-//  std::cout << (*foo.*func)(100);
-//	
-//	Stack<string> stack;
-//	
-//	stack.push("bottom");
-//	stack.push("middle");
-//	stack.push("top");
-//	
-//	Node<string> *node = stack.find("bananas");
-//	if(node)
-//		cout << node->data;
-//	else
-//		cout << "Couldn't find bananas.";
-//	
-//	stack.reverse();
-//	cout << "The stack is currently: " << stack << endl;
 	
-	
-    return 0;
+  return 0;
 }

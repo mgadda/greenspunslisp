@@ -19,22 +19,25 @@
 #include "function.h"
 #include "continuation.h"
 
+#include "mother.h"
+
 extern Object *eval(Object* obj, Environment *env);
 
 namespace  {
-  void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*)) {
+  void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), bool shouldExportSymbol) {
     Symbol *sym = package.internSymbol(name);
     package.exportSymbol(name);
     
-    Callable *fun = new Function(funcPtr);  
+    Callable *fun = new Function(name, funcPtr);  
     sym->setFunction(fun);
   }
 
-  void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*)) {
+  void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), bool shouldExportSymbol) {
     Symbol *sym = package.internSymbol(name);
-    package.exportSymbol(name);
+    if (shouldExportSymbol)
+      package.exportSymbol(name);
     
-    Callable *fun = new SpecialOperator(funcPtr);  
+    Callable *fun = new SpecialOperator(name, funcPtr);  
     sym->setFunction(fun);
   }
 
@@ -44,25 +47,42 @@ void initSystem() {
   Package &system = Package::system();
   
   // Special Operators
-  bindSymbolToSpecialOperator(system, "QUOTE", quote);
-  bindSymbolToSpecialOperator(system, "SETQ", setq);
-  bindSymbolToSpecialOperator(system, "PROGN", progn);
-  bindSymbolToSpecialOperator(system, "LET", let);
-  bindSymbolToSpecialOperator(system, "LET*", letStar);
-  bindSymbolToSpecialOperator(system, "IF", If);
-  bindSymbolToSpecialOperator(system, "BLOCK", block);
-  bindSymbolToSpecialOperator(system, "RETURN-FROM", returnFrom);
-  bindSymbolToSpecialOperator(system, "FUNCTION", function);
-  bindSymbolToSpecialOperator(system, "LAMBDA", lambda);
+  bindSymbolToSpecialOperator(system, "QUOTE", quote, true);
+  bindSymbolToSpecialOperator(system, "SETQ", setq, true);
+  bindSymbolToSpecialOperator(system, "PROGN", progn, true);
+  bindSymbolToSpecialOperator(system, "LET", let, true);
+  bindSymbolToSpecialOperator(system, "LET*", letStar, true);
+  bindSymbolToSpecialOperator(system, "IF", If, true);
+  bindSymbolToSpecialOperator(system, "BLOCK", block, true);
+  bindSymbolToSpecialOperator(system, "RETURN-FROM", returnFrom, true);
+  bindSymbolToSpecialOperator(system, "FUNCTION", function, true);
+  bindSymbolToSpecialOperator(system, "LAMBDA", lambda, true);
+  bindSymbolToSpecialOperator(system, "GC", gc, false);
+  bindSymbolToSpecialOperator(system, "DEFMACRO", defmacro, true);
   
   // System Functions
-  bindSymbolToFunc(system, "LENGTH", length);
-  bindSymbolToFunc(system, "CAR", car);
-  bindSymbolToFunc(system, "CDR", cdr);
-  bindSymbolToFunc(system, "CONS", cons);
+  bindSymbolToFunc(system, "%PUTD", putd, false);
+  bindSymbolToFunc(system, "LENGTH", length, true);
+  bindSymbolToFunc(system, "CAR", car, true);
+  bindSymbolToFunc(system, "CDR", cdr, true);
+  bindSymbolToFunc(system, "CONS", cons, true);
+  bindSymbolToFunc(system, "+", plus, true);
+  bindSymbolToFunc(system, "LIST", list, true);
+  bindSymbolToFunc(system, "LIST*", listStar, true);
+  bindSymbolToFunc(system, "FUNCALL", funcall, true);
+  bindSymbolToFunc(system, "MACROEXPAND-1", macroexpand_1, true);
+  
+  // Accessors
+  bindSymbolToFunc(system, "SYMBOL-FUNCTION", symbol_function, true);
+  
 //  bindSymbolToFunc(system, "BACKQUOTE", backquote);
 //  bindSymbolToFunc(system, "UNQUOTE", unquote);
 //  bindSymbolToFunc(system, "SPLICE", splice);
+  
+  Symbol *macroexpand_hook = Package::system().internSymbol("*MACROEXPAND-HOOK*");
+  
+  Package::system().exportSymbol("*MACROEXPAND-HOOK*");
+
 }
 
 #pragma mark Special Operators
@@ -330,17 +350,33 @@ Object *returnFrom(Cons *args, Environment *env) {
 
 Object *function(Cons *args, Environment *env) {
   Object *first = args->car();
+  Environment *funEnv = NULL;
   
   if (first->type() == std::string("SYMBOL")) {
-    Callable *fun = (Callable*)env->functionForSymbol((Symbol*)first);
-    if (!fun || fun->type() != std::string("FUNCTION")) {
-      throw "FUNCTION: undefined function ____";
+    if (args->length() == 2 && (*args)[1]->type() == std::string("CONS")) {
+      // names a function (does not bind it, nor store it in a function cell) 
+      // (function foo (lambda ...) ...) => #<FUNCTION FOO (X) X)
+      funEnv = new Environment(env);
+      Function *lambdaFunc = (Function*)eval((*args)[1], funEnv);
+      if (!lambdaFunc || lambdaFunc->type() != std::string("FUNCTION")) {
+        throw "FUNCTION: ___ should be a lambda expression";
+      }
+      
+      lambdaFunc->setName((Symbol*)first);
+      return lambdaFunc;
     }
-    return fun;
+    else {
+      // function (function car) => #<SYSTEM-FUNCTION CAR>
+      Callable *fun = (Callable*)env->functionForSymbol((Symbol*)first);
+      if (!fun || fun->type() != std::string("FUNCTION")) {
+        throw "FUNCTION: undefined function ____";
+      }
+      return fun;
+    }
   }
   else if (first->type() == std::string("CONS")) {
     // close over lambda expression
-    Environment *funEnv = new Environment(env);
+    funEnv = new Environment(env);
     return eval(first, funEnv);  
   }
   else {
@@ -349,8 +385,6 @@ Object *function(Cons *args, Environment *env) {
 }
 
 Object *lambda(Cons *args, Environment *env) {
-  size_t len = args->length();
-
   Object *form, *lambdaList;
 
   lambdaList = (*args)[0];
@@ -359,7 +393,37 @@ Object *lambda(Cons *args, Environment *env) {
   return new Function(form, (Cons*)lambdaList);
 }
 
+Object *gc(Cons *args, Environment *env) {
+  Mother::instance().markAndSweep();
+  return Symbol::nil();
+}
+
+Object *defmacro(Cons* args, Environment *env) {
+  // defmacro is basically what defun would look like if it were defined
+  Object *form, *lambdaList;
+  Symbol *name;
+  
+  name = (Symbol*)(*args)[0];
+  lambdaList = (*args)[1];
+  form = (*args)[2];
+  
+  Function* fun = new Function(form, (Cons*)lambdaList);
+  fun->setName(name);
+  name->setFunction(fun);
+  return fun;
+}
+
 #pragma mark System Functions
+
+Object *putd(Cons *args, Environment *env) {
+  Symbol *sym = (Symbol*)args->car();
+  
+  Object *value = (*args)[1];
+  if (value->type() == std::string("FUNCTION")) {
+    sym->setFunction((Callable*)value);
+  }
+  return value;
+}
 
 Object *length(Cons* args, Environment *env) {
   Cons *list = (Cons*)args->car();
@@ -403,3 +467,117 @@ Object *cons(Cons* args, Environment *env) {
   
   return new Cons((*args)[0], (*args)[1]);
 }
+
+Object *plus(Cons* args, Environment *env) {
+  __block int sum = 0;
+  args->each(^(Object *obj) {
+    if (obj->type() == std::string("INTEGER")) {
+      Integer* integer = (Integer*)obj;
+      sum += integer->value();
+    }    
+  });
+  return new Integer(sum);
+}
+
+Object *list(Cons* args, Environment *env) {
+  return args->map(^Object *(Object *obj) {
+    return obj;
+  });
+}
+
+Object *listStar(Cons* args, Environment *env) {
+  return args->map(^Object *(Object *obj) {
+    return obj;
+  });
+}
+
+Object *funcall(Cons *args, Environment *env) {
+  // funcall applies function to args. If function is a symbol, it is coerced to a function as if by finding its functional value in the global environment.
+  Function *fun = NULL;
+  
+  if (args->car()->type() == std::string("SYMBOL")) {
+    fun = (Function*)env->functionForSymbol((Symbol*)args->car());
+  }
+  else if (args->car()->type() == std::string("FUNCTION")) {
+    fun = (Function*)args->car();
+    
+  }
+  
+  if (fun && fun->type() == std::string("FUNCTION")) {
+    if (args->cdr()->type() == std::string("CONS"))
+      return fun->call((Cons*)args->cdr(), env); // (funcall '+ 1 2)
+    else
+      return fun->call(NULL, env); // (funcall 'callme)
+  }
+  
+  throw "FUNCALL: not a function";
+}
+
+Object *macroexpand_1(Cons *args, Environment *env) {
+  /*
+   Once macroexpand-1 has determined that the form is a macro form, 
+   it obtains an appropriate expansion function for the macro or 
+   symbol macro. The value of *macroexpand-hook* is coerced to a 
+   function and then called as a function of three arguments: the 
+   expansion function, the form, and the env. The value returned 
+   from this call is taken to be the expansion of the form.
+   */
+  
+  // determine if the form (macroexpand-1 '(defun foo ...))
+  // is a macro form
+  // if it is, get the expansion function with
+  // (macro-function (car args)) OR really:
+  // 
+  if (args->car()->type() == std::string("SYMBOL")) {
+    throw "not yet implemented: symbol macros";
+  }
+  
+  if (args->car()->type() != std::string("CONS")) {
+    throw "MACROEXPAND-1: not a macro form"; // TODO: check if this right
+  }
+  
+  Cons *macroForm = (Cons*)args->car();
+  
+  if (macroForm->car()->type() != std::string("SYMBOL")) {
+    throw "MACROEXPAND-1: not a macro form"; // TODO: check if this right
+  }
+  
+  Symbol *macroSymbol = (Symbol*)macroForm->car();
+  
+  Callable *expansionFunction = env->functionForSymbol(macroSymbol);
+  
+  if (!expansionFunction) {
+    // TODO: check if this right
+    throw "MACROEXPAND-1: could not coerce symbol to macro function";
+  }
+  
+  // Get macroexpansion hook
+  Symbol *macroexpand_hook = Package::system().resolveInternSymbol("*MACROEXPAND-HOOK*");
+  
+  Callable *fun = (Callable*)env->variableForSymbol(macroexpand_hook);
+  
+  args->setCdr(new Cons(env)); // append env onto end of list
+  args = new Cons(expansionFunction, args); // prepend function to front of list
+  
+  return fun->call(args, env);
+}
+
+#pragma mark Accessors
+
+Object *symbol_function(Cons *args, Environment *env) {
+  Callable *fun = NULL;
+  
+  if (args->car()->type() != std::string("SYMBOL")) {
+    throw "SYMBOl-FUNCTION: not a symbol";
+  }
+  
+  fun = (Callable*)env->functionForSymbol((Symbol*)args->car());
+  
+  if (!fun)
+    throw "SYMBOL-FUNCTION: no function defined";
+  
+  return fun;
+  
+}
+
+#pragma mark System Macros

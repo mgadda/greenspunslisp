@@ -39,6 +39,8 @@ public:
 	Integer() {}
 	Integer(int val) : value_(val) {}
   Integer(std::string &str);
+  
+  int value();
 };
 
 class Readtable : public Object {

@@ -45,7 +45,7 @@ Object *eval(Object* obj, Environment *env) {
         return fun(args, env);
       }
       else if (fun.type() == std::string("MACRO")) {
-        
+        return fun(args, env);
       }
       else if (fun.type() == std::string("FUNCTION")) {
         Cons* evaldArgs = NULL;
@@ -70,13 +70,18 @@ Object *eval(Object* obj, Environment *env) {
       
       
     }
-    else if (cons->car()->type() == std::string("CONS")) { // must be lambda form
-
-      return eval(cons->car(), env); // this is temporary
-      // TODO: check for lambda form and proceed as required
+    else if (cons->car()->type() == std::string("CONS")) {
+      // must be lambda form (lambda lambda-list body*)
+      // treat identically to (funcall #'(lambda lambda-list body*))
+      Cons *lambdaForm = (Cons*)cons->car();
+      Function *lambdaFun = (Function*)eval(lambdaForm, env);
+      
+      if (lambdaFun->type() == std::string("FUNCTION")) 
+        return lambdaFun->call((Cons*)cons->cdr(), env);
+      //return eval(cons->car(), env); // this is temporary      
       
     }
-    else { // self-evaluating object, can't be 
+    else { // self-evaluating object, can't be turned into a function
       throw "not a function name";
     }
   } 

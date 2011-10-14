@@ -11,11 +11,11 @@
 #include "symbol.h"
 #include "cons.h"
 
-Macro::Macro() {
+Macro::Macro(std::string name) : Callable(name) {
 }
 
 Macro *Macro::print(std::ostream &os) {
-  os << "#<MACRO >";
+  os << "#<MACRO " << name_ << ">";
   return this;
 }
 

@@ -14,11 +14,16 @@
 
 class Environment;
 class Cons;
+class Symbol;
 
 class Callable : public Object {
+protected:
+  std::string name_;
 public:
+  Callable(std::string name);
   virtual Object *call(Cons *cons, Environment *env)=0;
   Object *operator()(Cons *cons, Environment *env);
+  void setName(Symbol* symbol);  
 };
 
 #endif

@@ -6,6 +6,8 @@
 //  Copyright (c) 2011 Catalpa Labs. All rights reserved.
 //
 
+#define DEBUG_MOTHER
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -61,6 +63,6 @@ void* Object::operator new(size_t size) {
 void Object::operator delete(void *obj) {
   // noop because deallocation is handled by Mother through free()
   // downside? class destructor not invoked automatically, can Mother do this?
-  __noop;
+  //__noop;
   //free(obj); 
 }

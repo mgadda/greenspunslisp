@@ -6,6 +6,8 @@
 //  Copyright (c) 2011 Catalpa Labs. All rights reserved.
 //
 
+#define DEBUG_MOTHER
+
 #include <iostream>
 #include "mother.h"
 #include "object.h"
@@ -18,7 +20,7 @@
 
 Mother *Mother::singleton_ = NULL;
 
-Mother::Mother() : allocation_size_(0), deferGC_(false), heapTriggerSize_(2048) {
+Mother::Mother() : allocation_size_(0), deferGC_(false), heapTriggerSize_(4096) {
 }
 
 Mother &Mother::instance() {
@@ -49,12 +51,12 @@ Object *Mother::newObject(size_t size) {
   
   if (allocation_size_ > heapTriggerSize_) {
     markAndSweep();
-    if (allocation_size_ >= heapTriggerSize_*.9) {
+    if (allocation_size_ >= heapTriggerSize_*.8) {
       // if we could reduce memory usage to 80% of heap size
-      heapTriggerSize_ *= 1.5; // increase by 20%
+      heapTriggerSize_ = allocation_size_ * 2;
     }
     else {
-      heapTriggerSize_ /= 1.5; // decrease by 20%
+      heapTriggerSize_ /= 1.2;
     }
 
   }
@@ -63,7 +65,7 @@ Object *Mother::newObject(size_t size) {
 }
 
 void Mother::markAndSweep() {
-  if (allocation_size_ > heapTriggerSize_) {
+  //if (allocation_size_ > heapTriggerSize_) {
     Object *obj = NULL;
 
     // mark
@@ -110,7 +112,7 @@ void Mother::markAndSweep() {
       obj->clearMark();
     }
     
-  }
+  //}
 }
 
 void Mother::addRoot(Object *root) {

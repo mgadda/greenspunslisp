@@ -11,7 +11,7 @@
 
 Continuation::Continuation(jmp_buf &jmp_env, 
                            void (^block)(Object *obj, Environment *env)) 
-   : block_(block), jmp_env_(jmp_env) {}
+   : block_(block), jmp_env_(jmp_env), Callable("") {}
 
 Object *Continuation::call(Cons *cons, Environment *env) {
   call(cons, env);

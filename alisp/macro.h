@@ -21,7 +21,7 @@ class Macro : public Callable {
   // arg list
   
 public:
-  Macro();
+  Macro(std::string name);
   
   virtual const char *type() { return "MACRO"; }
   virtual Macro *print(std::ostream &os);

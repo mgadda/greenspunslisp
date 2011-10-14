@@ -10,12 +10,12 @@
 #include "special_operator.h"
 #include "cons.h"
 
-SpecialOperator::SpecialOperator(Object *(*internalFun)(Cons*,Environment*)) 
-  : internalFun_(internalFun) {
+SpecialOperator::SpecialOperator(std::string name, Object *(*internalFun)(Cons*,Environment*)) 
+  : internalFun_(internalFun), Callable(name) {
 }
 
 SpecialOperator *SpecialOperator::print(std::ostream &os) {
-  os << "#<SPECIAL-OPERATOR>";
+  os << "#<SPECIAL-OPERATOR " << name_ << ">";
   return this;
 }
 

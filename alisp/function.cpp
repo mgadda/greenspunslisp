@@ -14,20 +14,27 @@
 
 extern Object *eval(Object* obj, Environment *env);
 
-
-Function::Function(Object *form, Cons *argNames) : form_(form), argNames_(argNames) {
+// TODO: name should probably be a symbol or possibly a keyword, but the spec
+// is kind of fuzzy on the matter
+Function::Function(Object *form, Cons *argNames) 
+  : form_(form), argNames_(argNames), Callable(":LAMBDA") {
 }
 
-Function::Function(Object *(*internalFun)(Cons*,Environment*)) : internalFun_(internalFun) {
+Function::Function(std::string name, Object *(*internalFun)(Cons*,Environment*)) 
+  : internalFun_(internalFun), Callable(name) {
     
 }
 
 Function *Function::print(std::ostream &os) {
   if (form_) {
+    os << "#<FUNCTION " << name_ << " ";
+    argNames_->print(os);
+    os << " ";
     form_->print(os);
+    os << ">";
   }
   else if (internalFun_) {
-    os << "#<COMPILED-FUNCTION>";
+    os << "#<SYSTEM-FUNCTION " << name_ << ">";
   }
   
   return this;
@@ -54,10 +61,11 @@ Object *Function::call(Cons *args, Environment *env) {
       }
       
     });
-    
-    if (NILP(argNamesPtr)) { // we ran out of args before arg names
-      throw "too many arguments";
-    }
+
+    // TODO: this isn't correct, fix it.
+//    if (NILP(argNamesPtr)) { // we ran out of args before arg names
+//      throw "too many arguments";
+//    }
   }
   
   return eval(form_, functionEnv_);

@@ -27,7 +27,7 @@ class Function : public Callable {
   
 public:
   Function(Object *form, Cons *argNames);
-  Function(Object *(*internalFun_)(Cons*,Environment*));
+  Function(std::string name, Object *(*internalFun_)(Cons*,Environment*));
   
   virtual const char *type() { return "FUNCTION"; }
   virtual Function *print(std::ostream &os);
@@ -38,6 +38,7 @@ public:
   // in which function was invoked but with these additional lexical bindings
   
   virtual bool mark();
+  
 };
 
 #endif

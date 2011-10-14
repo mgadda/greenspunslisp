@@ -48,3 +48,7 @@ Object *String::print(std::ostream &os) {
 Integer::Integer(std::string &str) {
   value_ = atoi(str.c_str());
 }
+
+int Integer::value() {
+  return value_;
+}
