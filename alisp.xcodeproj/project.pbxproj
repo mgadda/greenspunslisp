@@ -120,7 +120,9 @@
 				7D9AFB7014206F5E0025D3F6 /* alisp */,
 				7D9AFB6E14206F5E0025D3F6 /* Products */,
 			);
+			indentWidth = 2;
 			sourceTree = "<group>";
+			tabWidth = 2;
 		};
 		7D9AFB6E14206F5E0025D3F6 /* Products */ = {
 			isa = PBXGroup;
@@ -265,7 +267,8 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = /usr/local/Cellar/pcre/8.10/lib/;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/pcre/8.13/include;
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lpcre";
@@ -288,6 +291,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/pcre/8.13/include;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "-lpcre";
 				SDKROOT = macosx;
