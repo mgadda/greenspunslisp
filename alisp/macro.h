@@ -17,11 +17,11 @@ class Cons;
 
 class Macro : public Callable {
   Cons *argNames_;
-  
+  Object *form_;
   // arg list
   
 public:
-  Macro(std::string name);
+  Macro(std::string name, Cons *lambdaList, Object *form);
   
   virtual const char *type() { return "MACRO"; }
   virtual Macro *print(std::ostream &os);

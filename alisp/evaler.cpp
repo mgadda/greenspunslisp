@@ -76,8 +76,13 @@ Object *eval(Object* obj, Environment *env) {
       Cons *lambdaForm = (Cons*)cons->car();
       Function *lambdaFun = (Function*)eval(lambdaForm, env);
       
+      Cons* evaldArgs = NULL;
+      if(cons->cdr()->type() == std::string("CONS")) {
+        evaldArgs = evalList((Cons*)cons->cdr(), env);
+      }
+      
       if (lambdaFun->type() == std::string("FUNCTION")) 
-        return lambdaFun->call((Cons*)cons->cdr(), env);
+        return lambdaFun->call(evaldArgs, env);
       //return eval(cons->car(), env); // this is temporary      
       
     }

@@ -27,7 +27,7 @@ class Function : public Callable {
   
 public:
   Function(Object *form, Cons *argNames);
-  Function(std::string name, Object *(*internalFun_)(Cons*,Environment*));
+  Function(std::string name, Object *(*internalFun_)(Cons*,Environment*), size_t requiredArgsCount);
   
   virtual const char *type() { return "FUNCTION"; }
   virtual Function *print(std::ostream &os);

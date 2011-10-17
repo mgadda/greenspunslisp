@@ -10,8 +10,9 @@
 #include "special_operator.h"
 #include "cons.h"
 
-SpecialOperator::SpecialOperator(std::string name, Object *(*internalFun)(Cons*,Environment*)) 
+SpecialOperator::SpecialOperator(std::string name, Object *(*internalFun)(Cons*,Environment*), size_t requiredArgsCount) 
   : internalFun_(internalFun), Callable(name) {
+  requiredArgsCount_ = requiredArgsCount;
 }
 
 SpecialOperator *SpecialOperator::print(std::ostream &os) {
@@ -20,6 +21,8 @@ SpecialOperator *SpecialOperator::print(std::ostream &os) {
 }
 
 Object *SpecialOperator::call(Cons *args, Environment *env) {  
+  if (!hasMinArgs(args)) throw "EVAL: too few arguments";
+
   return internalFun_(args, env);
 }
 

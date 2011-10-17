@@ -17,27 +17,29 @@
 #include "environment.h"
 #include "data_types.h"
 #include "function.h"
+#include "macro.h"
 #include "continuation.h"
 
 #include "mother.h"
 
 extern Object *eval(Object* obj, Environment *env);
+extern Cons *evalList(Cons *list, Environment *env);
 
 namespace  {
-  void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), bool shouldExportSymbol) {
+  void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), size_t minRequiredArgs, bool shouldExportSymbol) {
     Symbol *sym = package.internSymbol(name);
     package.exportSymbol(name);
     
-    Callable *fun = new Function(name, funcPtr);  
+    Callable *fun = new Function(name, funcPtr, minRequiredArgs);  
     sym->setFunction(fun);
   }
 
-  void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), bool shouldExportSymbol) {
+  void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), size_t minRequiredArgs, bool shouldExportSymbol) {
     Symbol *sym = package.internSymbol(name);
     if (shouldExportSymbol)
       package.exportSymbol(name);
     
-    Callable *fun = new SpecialOperator(name, funcPtr);  
+    Callable *fun = new SpecialOperator(name, funcPtr, minRequiredArgs);  
     sym->setFunction(fun);
   }
 
@@ -47,47 +49,47 @@ void initSystem() {
   Package &system = Package::system();
   
   // Special Operators
-  bindSymbolToSpecialOperator(system, "QUOTE", quote, true);
-  bindSymbolToSpecialOperator(system, "SETQ", setq, true);
-  bindSymbolToSpecialOperator(system, "PROGN", progn, true);
-  bindSymbolToSpecialOperator(system, "LET", let, true);
-  bindSymbolToSpecialOperator(system, "LET*", letStar, true);
-  bindSymbolToSpecialOperator(system, "IF", If, true);
-  bindSymbolToSpecialOperator(system, "BLOCK", block, true);
-  bindSymbolToSpecialOperator(system, "RETURN-FROM", returnFrom, true);
-  bindSymbolToSpecialOperator(system, "FUNCTION", function, true);
-  bindSymbolToSpecialOperator(system, "LAMBDA", lambda, true);
-  bindSymbolToSpecialOperator(system, "GC", gc, false);
-  bindSymbolToSpecialOperator(system, "DEFMACRO", defmacro, true);
+  bindSymbolToSpecialOperator(system, "QUOTE", quote, 1, true);
+  bindSymbolToSpecialOperator(system, "SETQ", setq, 2, true);
+  bindSymbolToSpecialOperator(system, "PROGN", progn, 0, true);
+  bindSymbolToSpecialOperator(system, "LET", let, 1, true);
+  bindSymbolToSpecialOperator(system, "LET*", letStar, 1, true);
+  bindSymbolToSpecialOperator(system, "IF", If, 2, true);
+  bindSymbolToSpecialOperator(system, "BLOCK", block, 1, true);
+  bindSymbolToSpecialOperator(system, "RETURN-FROM", returnFrom, 1, true);
+  bindSymbolToSpecialOperator(system, "FUNCTION", function, 1, true);
+  bindSymbolToSpecialOperator(system, "LAMBDA", lambda, 1, true);
+  bindSymbolToSpecialOperator(system, "GC", gc, 0, false);
+  bindSymbolToSpecialOperator(system, "DEFMACRO", defmacro, 2, true);
+  bindSymbolToSpecialOperator(system, "EVAL", (Object *(*)(Cons*,Environment*))eval, 1, true);
   
   // System Functions
-  bindSymbolToFunc(system, "%PUTD", putd, false);
-  bindSymbolToFunc(system, "LENGTH", length, true);
-  bindSymbolToFunc(system, "CAR", car, true);
-  bindSymbolToFunc(system, "CDR", cdr, true);
-  bindSymbolToFunc(system, "CONS", cons, true);
-  bindSymbolToFunc(system, "+", plus, true);
-  bindSymbolToFunc(system, "LIST", list, true);
-  bindSymbolToFunc(system, "LIST*", listStar, true);
-  bindSymbolToFunc(system, "FUNCALL", funcall, true);
-  bindSymbolToFunc(system, "MACROEXPAND-1", macroexpand_1, true);
+  bindSymbolToFunc(system, "%PUTD", putd, 2, false);
+  bindSymbolToFunc(system, "LENGTH", length, 1, true);
+  bindSymbolToFunc(system, "CAR", car, 1, true);
+  bindSymbolToFunc(system, "CDR", cdr, 1, true);
+  bindSymbolToFunc(system, "CONS", cons, 2, true);
+  bindSymbolToFunc(system, "+", plus, 1, true);
+  bindSymbolToFunc(system, "LIST", list, 0, true);
+  bindSymbolToFunc(system, "LIST*", listStar, 0, true);
+  bindSymbolToFunc(system, "FUNCALL", funcall, 1, true);
+  bindSymbolToFunc(system, "MACROEXPAND-1", macroexpand_1, 1, true);
   
   // Accessors
-  bindSymbolToFunc(system, "SYMBOL-FUNCTION", symbol_function, true);
+  bindSymbolToFunc(system, "SYMBOL-FUNCTION", symbol_function, 1, true);
   
 //  bindSymbolToFunc(system, "BACKQUOTE", backquote);
 //  bindSymbolToFunc(system, "UNQUOTE", unquote);
 //  bindSymbolToFunc(system, "SPLICE", splice);
   
-  Symbol *macroexpand_hook = Package::system().internSymbol("*MACROEXPAND-HOOK*");
-  
+  Package::system().internSymbol("*MACROEXPAND-HOOK*")->setValue(Package::system().resolveInternSymbol("FUNCALL")->function());
   Package::system().exportSymbol("*MACROEXPAND-HOOK*");
 
 }
 
 #pragma mark Special Operators
 
-Object *quote(Cons* args, Environment *env) {
+LISPFUN(quote) {
   if (args->length() > 1) {
     throw "too many arguments for special operator QUOTE:";
   }
@@ -104,7 +106,7 @@ Object *quote(Cons* args, Environment *env) {
   return first;
 }
 
-Object *setq(Cons* args, Environment *env) {
+LISPFUN(setq) {
   // check number of arguemnts, if odd, raise error
   if (args->length() % 2 == 1) {
     char *errMsg;
@@ -120,7 +122,7 @@ Object *setq(Cons* args, Environment *env) {
   return env->bindVariable(symbol, eval(value, env));
 }
 
-Object *progn(Cons* args, Environment *env) {
+LISPFUN(progn) {
   __block Object *last = Symbol::nil();
   args->each(^(Object *obj) {
     last = eval(obj, env);
@@ -128,7 +130,7 @@ Object *progn(Cons* args, Environment *env) {
   return last;
 }
 
-Object *let(Cons *args, Environment *env) {
+LISPFUN(let) {
   // same as let, but we have to eval all of the binding values
   // before binding them to their symbols
   /*
@@ -219,7 +221,7 @@ Object *let(Cons *args, Environment *env) {
   
 }
 
-Object *letStar(Cons *args, Environment *env) {
+LISPFUN(letStar) {
   /*
    (let* ((var1 init-form-1)
           (var2 init-form-2)
@@ -275,7 +277,7 @@ Object *letStar(Cons *args, Environment *env) {
   return progn((Cons*)args->cdr(), letEnv);
 }
 
-Object *If(Cons *args, Environment *env) {
+LISPFUN(If) {
 
   if (args->length() < 2) {
     throw "EVAL: too few parameters for special operator IF:";
@@ -293,7 +295,7 @@ Object *If(Cons *args, Environment *env) {
   }
 }
 
-Object *block(Cons *args, Environment *env) {
+LISPFUN(block) {
   if (args->length() == 0)
     throw "EVAL: too few parameters for special operator BLOCK:";
 
@@ -321,7 +323,7 @@ Object *block(Cons *args, Environment *env) {
   
 }
 
-Object *returnFrom(Cons *args, Environment *env) {
+LISPFUN(returnFrom) {
   size_t len = args->length();
   
   if (len == 0)
@@ -348,7 +350,7 @@ Object *returnFrom(Cons *args, Environment *env) {
   return Symbol::nil(); // we'll never reach this point unless longjmp fails
 }
 
-Object *function(Cons *args, Environment *env) {
+LISPFUN(function) {
   Object *first = args->car();
   Environment *funEnv = NULL;
   
@@ -384,7 +386,7 @@ Object *function(Cons *args, Environment *env) {
   }
 }
 
-Object *lambda(Cons *args, Environment *env) {
+LISPFUN(lambda) {
   Object *form, *lambdaList;
 
   lambdaList = (*args)[0];
@@ -393,29 +395,37 @@ Object *lambda(Cons *args, Environment *env) {
   return new Function(form, (Cons*)lambdaList);
 }
 
-Object *gc(Cons *args, Environment *env) {
+LISPFUN(gc) {
   Mother::instance().markAndSweep();
   return Symbol::nil();
 }
 
-Object *defmacro(Cons* args, Environment *env) {
+LISPFUN(defmacro) {
   // defmacro is basically what defun would look like if it were defined
-  Object *form, *lambdaList;
-  Symbol *name;
+  Object *form;
+  Cons *lambdaList;
+  Symbol *macro_symbol;
   
-  name = (Symbol*)(*args)[0];
-  lambdaList = (*args)[1];
+  macro_symbol = (Symbol*)args->car();
+  lambdaList = (Cons*)(*args)[1];
   form = (*args)[2];
+
+  macro_symbol->setFunction(new Macro(macro_symbol->name(), lambdaList, form));
+  return macro_symbol->function();
+}
+
+LISPFUN(eval) {
+  if (args->length() > 1)
+    throw "EVAL: too many arguments";
+  if (args->length() < 1)
+    throw "EVAL: too few arguments";
   
-  Function* fun = new Function(form, (Cons*)lambdaList);
-  fun->setName(name);
-  name->setFunction(fun);
-  return fun;
+  return eval(args->car(), env);
 }
 
 #pragma mark System Functions
 
-Object *putd(Cons *args, Environment *env) {
+LISPFUN(putd) {
   Symbol *sym = (Symbol*)args->car();
   
   Object *value = (*args)[1];
@@ -425,13 +435,13 @@ Object *putd(Cons *args, Environment *env) {
   return value;
 }
 
-Object *length(Cons* args, Environment *env) {
+LISPFUN(length) {
   Cons *list = (Cons*)args->car();
   Integer *integer = new Integer((int)list->length());
   return integer;
 }
 
-Object *car(Cons* args, Environment *env) {
+LISPFUN(car) {
   Object *list = args->car(); // first argument
   
   if (NILP(args->car()))
@@ -445,7 +455,7 @@ Object *car(Cons* args, Environment *env) {
   return ((Cons*)list)->car();
 }
 
-Object *cdr(Cons* args, Environment *env) {
+LISPFUN(cdr) {
   Object *list = args->car(); // first argument
   
   if (NILP(args->car()))
@@ -459,7 +469,7 @@ Object *cdr(Cons* args, Environment *env) {
   return ((Cons*)list)->cdr();
 }
 
-Object *cons(Cons* args, Environment *env) {
+LISPFUN(cons) {
   if (args->length() > 2)
     throw "too many arguments given to CONS:";
   if (args->length() < 2)
@@ -468,7 +478,7 @@ Object *cons(Cons* args, Environment *env) {
   return new Cons((*args)[0], (*args)[1]);
 }
 
-Object *plus(Cons* args, Environment *env) {
+LISPFUN(plus) {
   __block int sum = 0;
   args->each(^(Object *obj) {
     if (obj->type() == std::string("INTEGER")) {
@@ -479,19 +489,24 @@ Object *plus(Cons* args, Environment *env) {
   return new Integer(sum);
 }
 
-Object *list(Cons* args, Environment *env) {
+LISPFUN(list) {
+  Cons *newList = args->map(^Object *(Object *obj) {
+    return obj;
+  });
+
+  if (NILP(newList->car()) && NILP(newList->cdr())) {
+    return Symbol::nil();
+  }
+  return newList;
+}
+
+LISPFUN(listStar) {
   return args->map(^Object *(Object *obj) {
     return obj;
   });
 }
 
-Object *listStar(Cons* args, Environment *env) {
-  return args->map(^Object *(Object *obj) {
-    return obj;
-  });
-}
-
-Object *funcall(Cons *args, Environment *env) {
+LISPFUN(funcall) {
   // funcall applies function to args. If function is a symbol, it is coerced to a function as if by finding its functional value in the global environment.
   Function *fun = NULL;
   
@@ -513,7 +528,7 @@ Object *funcall(Cons *args, Environment *env) {
   throw "FUNCALL: not a function";
 }
 
-Object *macroexpand_1(Cons *args, Environment *env) {
+LISPFUN(macroexpand_1) {
   /*
    Once macroexpand-1 has determined that the form is a macro form, 
    it obtains an appropriate expansion function for the macro or 
@@ -564,7 +579,7 @@ Object *macroexpand_1(Cons *args, Environment *env) {
 
 #pragma mark Accessors
 
-Object *symbol_function(Cons *args, Environment *env) {
+LISPFUN(symbol_function) {
   Callable *fun = NULL;
   
   if (args->car()->type() != std::string("SYMBOL")) {

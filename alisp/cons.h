@@ -17,7 +17,7 @@ class Cons : public Object {
 	Object *cdr_;
   
 public:  
-  Cons() : car_(NULL), cdr_(NULL) {}
+  Cons();
   
 	Cons(Object *car);
 	Cons(Object *car, Object *cdr);

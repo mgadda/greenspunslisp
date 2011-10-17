@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 Catalpa Labs. All rights reserved.
 //
 
-#define DEBUG_MOTHER
+//#define DEBUG_MOTHER
 
 #include <iostream>
 #include "mother.h"

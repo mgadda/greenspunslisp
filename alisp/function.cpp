@@ -18,11 +18,12 @@ extern Object *eval(Object* obj, Environment *env);
 // is kind of fuzzy on the matter
 Function::Function(Object *form, Cons *argNames) 
   : form_(form), argNames_(argNames), Callable(":LAMBDA") {
+  requiredArgsCount_ = argNames_->length();
 }
 
-Function::Function(std::string name, Object *(*internalFun)(Cons*,Environment*)) 
+Function::Function(std::string name, Object *(*internalFun)(Cons*,Environment*), size_t requiredArgsCount) 
   : internalFun_(internalFun), Callable(name) {
-    
+  requiredArgsCount_ = requiredArgsCount;
 }
 
 Function *Function::print(std::ostream &os) {
@@ -41,6 +42,8 @@ Function *Function::print(std::ostream &os) {
 }
 
 Object *Function::call(Cons *args, Environment *env) {
+  if (!hasMinArgs(args)) throw "EVAL: too few arguments";
+  
   functionEnv_ = env; //new Environment(env);
   
   if (internalFun_) {

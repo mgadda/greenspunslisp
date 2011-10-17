@@ -18,47 +18,50 @@ class Integer;
 
 void initSystem();
 
+#define LISPFUN(name) Object *name(Cons* args, Environment *env)
+
 #pragma mark Special Operators
 
-Object *quote(Cons* args, Environment *env);
-Object *setq(Cons* args, Environment *env);
-Object *progn(Cons* args, Environment *env);
-Object *let(Cons *args, Environment *env);
-Object *letStar(Cons *args, Environment *env);
-Object *If(Cons *args, Environment *env);
-Object *block(Cons *args, Environment *env);
-Object *returnFrom(Cons *args, Environment *env);
-Object *function(Cons *args, Environment *env);
-Object *lambda(Cons *args, Environment *env);
-Object *gc(Cons *args, Environment *env);
-Object *defmacro(Cons* args, Environment *env);
+LISPFUN(quote);
+LISPFUN(setq);
+LISPFUN(progn);
+LISPFUN(let);
+LISPFUN(letStar);
+LISPFUN(If);
+LISPFUN(block);
+LISPFUN(returnFrom);
+LISPFUN(function);
+LISPFUN(lambda);
+LISPFUN(gc);
+LISPFUN(defmacro);
+LISPFUN(eval);
 
 #pragma mark System Functions
-Object *putd(Cons *args, Environment *env);
-Object *length(Cons* args, Environment *env);
-Object *car(Cons* args, Environment *env);
-Object *cdr(Cons* args, Environment *env);
-Object *cons(Cons* args, Environment *env);
-Object *plus(Cons* args, Environment *env);
-Object *list(Cons* args, Environment *env);
-Object *listStar(Cons* args, Environment *env);
-Object *funcall(Cons *args, Environment *env);
-Object *macroexpand_1(Cons *args, Environment *env);
+LISPFUN(putd);
+LISPFUN(length);
+LISPFUN(car);
+LISPFUN(cdr);
+LISPFUN(cons);
+LISPFUN(plus);
+LISPFUN(list);
+LISPFUN(listStar);
+LISPFUN(funcall);
+LISPFUN(macroexpand_1);
 
 #pragma mark Accessors
-Object *symbol_function(Cons *args, Environment *env);
+LISPFUN(symbol_function);
 
 #pragma mark System Macros
 
 // TODO: define these macros in lisp, not in code
 // (defmacro setf ...)
 // (defmacro defun ...)
-//Object *setf(Cons *args, Environment *env);
-//Object *defun(Cons *args, Environment *env);
+//LISPFUN(setf);
+//LISPFUN(defun);
 
 namespace {
-  void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), bool shouldExportSymbol);
-  void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), bool shouldExportSymbol);
+  void bindSymbolToFunc(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), size_t minRequiredArgs,bool shouldExportSymbol);
+  void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), size_t minRequiredArgs, bool shouldExportSymbol);
 }
 
 #endif

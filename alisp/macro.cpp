@@ -11,7 +11,9 @@
 #include "symbol.h"
 #include "cons.h"
 
-Macro::Macro(std::string name) : Callable(name) {
+Macro::Macro(std::string name, Cons *lambdaList, Object *form)
+  : Callable(name), argNames_(lambdaList), form_(form) {
+  requiredArgsCount_ = lambdaList->length();
 }
 
 Macro *Macro::print(std::ostream &os) {
@@ -19,7 +21,9 @@ Macro *Macro::print(std::ostream &os) {
   return this;
 }
 
-Object *Macro::call(Cons *args, Environment *env) {  
+Object *Macro::call(Cons *args, Environment *env) {    
+  if (!hasMinArgs(args)) throw "EVAL: too few arguments";
+  
   // TODO: implement macros
   return Symbol::nil();
 }

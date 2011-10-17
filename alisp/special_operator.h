@@ -23,7 +23,7 @@ class SpecialOperator : public Callable {
   // arg list
   
 public:
-  SpecialOperator(std::string name, Object *(*internalFun)(Cons*,Environment*));
+  SpecialOperator(std::string name, Object *(*internalFun)(Cons*,Environment*), size_t requiredArgsCount);
   
   virtual const char *type() { return "SPECIAL_OPERATOR"; }
   virtual SpecialOperator *print(std::ostream &os);

@@ -10,6 +10,9 @@
 #include "cons.h"
 #include "symbol.h"
 
+Cons::Cons() : car_(Symbol::nil()), cdr_(Symbol::nil()) {
+  
+}
 Cons::Cons(Object *car) : car_(car), cdr_(Symbol::nil()){ 
 }	
 
@@ -79,7 +82,7 @@ Cons *Cons::map(Object *(^block)(Object *)) {
    */
   const std::string consType("CONS");
   
-  while (ptr->type() == consType) {
+  while (ptr && ptr->type() == consType) {
     newListPtr->setCar(block(ptr->car())); // map to new value, save in new list
     
     if (ptr->cdr()->type() != consType) { // end of list
