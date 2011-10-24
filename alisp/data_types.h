@@ -26,6 +26,7 @@ public:
   String(const char *value);
 	String(std::string value);
 	
+  std::string value();
 };
 
 

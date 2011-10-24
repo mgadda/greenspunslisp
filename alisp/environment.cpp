@@ -28,6 +28,11 @@ Callable *Environment::bindFunction(Symbol* symbol, Callable* function) {
   return functionBindings_[symbol] = function;  
 }
 
+Callable *Environment::bindMacro(Symbol* symbol, Callable* macro) {
+  return functionBindings_[symbol] = macro;  
+}
+
+
 void Environment::unbindVariable(Symbol* symbol) {
   variableBindings_.erase(symbol);
 }
@@ -54,6 +59,19 @@ Callable *Environment::functionForSymbol(Symbol *symbol) {
       fun = parent_->functionForSymbol(symbol);
     else
       fun = symbol->function();
+  }
+  return fun;  
+}
+
+Callable *Environment::macroForSymbol(Symbol *symbol) {  
+  Callable *fun = NULL;
+  if(macroBindings_.count(symbol))
+    fun = macroBindings_[symbol];
+  else {
+    if (parent_)
+      fun = parent_->macroForSymbol(symbol);
+    else
+      fun = symbol->macro();
   }
   return fun;  
 }

@@ -23,6 +23,7 @@ class Symbol : public Object {
   Package *package_; // package cell
   Object *value_; // value cell
   Callable *function_; // function cell
+  Callable *macro_; // macro cell
   
   Cons *propertyList_;
   
@@ -48,7 +49,9 @@ public:
   Callable *function();
   void setFunction(Callable *value);
 
-  
+  Callable *macro();
+  void setMacro(Callable *value);
+
   static Symbol *nil();  
   static Symbol *t();
   

@@ -20,6 +20,10 @@ String::String(std::string value) {
   value_ = value;  
 };
 
+std::string String::value() {
+  return value_;
+}
+
 const char *String::type() { 
   return "STRING"; 
 }

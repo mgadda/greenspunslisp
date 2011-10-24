@@ -74,7 +74,10 @@ Object *Symbol::value() { return value_; }
 void Symbol::setValue(Object *value) { value_ = value; }
 
 Callable *Symbol::function() { return function_; }
-void Symbol::setFunction(Callable *function) { function_ = function; }
+void Symbol::setFunction(Callable *value) { function_ = value; }
+
+Callable *Symbol::macro() { return macro_; }
+void Symbol::setMacro(Callable *value) { macro_ = value; }
 
 bool Symbol::mark() {
   if (Object::mark()) {
@@ -86,6 +89,9 @@ bool Symbol::mark() {
     
     if (function_)
       function_->mark();
+
+    if (macro_)
+      macro_->mark();
 
     if (propertyList_)
       propertyList_->mark();
