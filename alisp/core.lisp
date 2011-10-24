@@ -5,6 +5,19 @@
 (export (find-symbol "CADDR" 'system) 'system)
 (export (find-symbol "CADDDR" 'system) 'system)
 
+;; 0-2 argument definition of defmacro
+(system::%putd 'system::defmacro2 
+  (function common-lisp::defmacro2 (lambda (name lambda-list env)
+    (list 'function (list 'lambda ('macro-form 'env)
+      (list 'let* (let ((len (length lambda-list)))
+                    (if (= len 0)
+                      ()
+                      (if (= len 1)
+                        (list (list (car lambda-list) ('cadr 'macro-form)))
+                        (if (= len 2)
+                          (list (list (car lambda-list) ('cadr 'macro-form))
+                                (list (cadr lambda-list) ('caddr 'macro-form)))))))
+            (list 'block name 'macro-form)))))))
 (system::%putd 'hook (function hook
 	(lambda (expander form env) 
 		(funcall expander form))))
