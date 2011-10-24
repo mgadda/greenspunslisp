@@ -45,6 +45,9 @@ public:
   
   Object *deferGC(Object *(^block)());
 //  void each(void (^block)(Object *));
+  
+  size_t allocation_size() { return allocation_size_; }
+  size_t heapTriggerSize() { return heapTriggerSize_; }
 };
 
 #endif

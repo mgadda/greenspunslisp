@@ -54,7 +54,7 @@ int main (int argc, const char * argv[])
   std::stringstream ss;
 
   __block int lineno = 0;
-  std::cout << "[" << lineno << "]> ";
+  std::cout << "[" << Mother::instance().allocation_size()/1000.0 << "KB " << lineno << "]> ";
 
   while (true) {
     
@@ -98,7 +98,7 @@ int main (int argc, const char * argv[])
         }
         
         std::cout << std::endl;
-        std::cout << "[" << ++lineno << "]> ";
+        std::cout << "[" << Mother::instance().allocation_size()/1000.0 << "KB " << lineno << "]> ";
 
       }
       return NULL;
