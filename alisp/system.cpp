@@ -76,6 +76,7 @@ void initSystem() {
   bindSymbolToFunc(system, "FUNCALL", funcall, 1, true);
   bindSymbolToFunc(system, "MACROEXPAND-1", macroexpand_1, 1, true);
   bindSymbolToFunc(system, "FIND-SYMBOL", findSymbol, 1, true);
+  bindSymbolToFunc(system, "EXPORT", exportSymbol, 1, true);
   
   // Accessors
   bindSymbolToFunc(system, "SYMBOL-FUNCTION", symbol_function, 1, true);
@@ -626,6 +627,36 @@ LISPFUN(findSymbol) {
   if (symbol) return symbol;
 
   return Symbol::nil();
+}
+
+LISPFUN(exportSymbol) {
+  if (args->car()->type() != std::string("SYMBOL"))
+    throw std::string("EXPORT: argument should be a symbol or a list of symbols, not ") + args->car()->print();
+  
+  Symbol *symbol = (Symbol*)args->car();
+  
+  Package *package = NULL;
+  if (args->length() >= 2) {
+    Object *packageOrPackageName = (*args)[1];
+    
+    if (packageOrPackageName->type() == std::string("PACKAGE")) {
+      package = (Package*)packageOrPackageName;
+    }
+    else if (packageOrPackageName->type() == std::string("SYMBOL")) {
+      package = Package::find(((Symbol*)packageOrPackageName)->name());
+    }
+    else {
+      throw std::string("EXPORT: argument should be a package or a package name, not ") + packageOrPackageName->print();
+    }
+  }
+  else {
+    package = (Package*)Package::common_lisp().resolveExternSymbol("*PACKAGE*")->value();    
+  }
+  
+  package->exportSymbol(symbol->name());
+    
+  return Symbol::t();
+  
 }
 
 #pragma mark Accessors

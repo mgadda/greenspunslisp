@@ -49,6 +49,7 @@ LISPFUN(listStar);
 LISPFUN(funcall);
 LISPFUN(macroexpand_1);
 LISPFUN(findSymbol);
+LISPFUN(exportSymbol);
 
 #pragma mark Accessors
 LISPFUN(symbol_function);
