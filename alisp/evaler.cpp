@@ -36,7 +36,7 @@ Object *eval(Object* obj, Environment *env) {
       Callable &fun = *env->functionForSymbol(symbol);
       
       if (!&fun) {
-        throw "not a function name";
+        throw "EVAL: not a function name";
       }
       
       Cons *args = (Cons*)cons->cdr();

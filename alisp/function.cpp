@@ -42,7 +42,7 @@ Function *Function::print(std::ostream &os) {
 }
 
 Object *Function::call(Cons *args, Environment *env) {
-  if (!hasMinArgs(args)) throw "EVAL: too few arguments";
+  if (!hasMinArgs(args)) throw std::string("EVAL: too few arguments for ") + name_;
   
   functionEnv_ = env; //new Environment(env);
   
