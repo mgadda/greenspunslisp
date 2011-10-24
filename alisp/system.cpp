@@ -70,6 +70,7 @@ void initSystem() {
   bindSymbolToFunc(system, "CDR", cdr, 1, true);
   bindSymbolToFunc(system, "CONS", cons, 2, true);
   bindSymbolToFunc(system, "+", plus, 1, true);
+  bindSymbolToFunc(system, "=", intEqual, 1, true);
   bindSymbolToFunc(system, "LIST", list, 0, true);
   bindSymbolToFunc(system, "LIST*", listStar, 0, true);
   bindSymbolToFunc(system, "FUNCALL", funcall, 1, true);
@@ -489,6 +490,22 @@ LISPFUN(plus) {
   return new Integer(sum);
 }
 
+LISPFUN(intEqual) {
+  Integer *left = (Integer*)args->car();
+  Integer *right = (Integer*)(*args)[1];
+  
+  if (left->type() != std::string("INTEGER"))
+    throw left->Object::print() + std::string(" is not a number");
+  if (right->type() != std::string("INTEGER"))
+    throw right->Object::print() + std::string(" is not a number");
+  
+  if (left->value() == right->value())
+    return Symbol::t();
+  else
+    return Symbol::nil();
+}
+
+
 LISPFUN(list) {
   Cons *newList = args->map(^Object *(Object *obj) {
     return obj;
@@ -583,7 +600,7 @@ LISPFUN(symbol_function) {
   Callable *fun = NULL;
   
   if (args->car()->type() != std::string("SYMBOL")) {
-    throw "SYMBOl-FUNCTION: not a symbol";
+    throw "SYMBOL-FUNCTION: not a symbol";
   }
   
   fun = (Callable*)env->functionForSymbol((Symbol*)args->car());

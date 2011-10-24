@@ -43,6 +43,7 @@ LISPFUN(car);
 LISPFUN(cdr);
 LISPFUN(cons);
 LISPFUN(plus);
+LISPFUN(intEqual);
 LISPFUN(list);
 LISPFUN(listStar);
 LISPFUN(funcall);
