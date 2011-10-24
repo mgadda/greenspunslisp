@@ -96,6 +96,9 @@ bool Symbol::mark() {
     if (propertyList_)
       propertyList_->mark();
     
+    nil_->mark();
+    t_->mark();
+    
     return true;
   }
   return false;

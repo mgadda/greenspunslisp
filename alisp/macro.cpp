@@ -33,6 +33,9 @@ bool Macro::mark() {
     if (argNames_)
       argNames_->mark();
     
+    if (form_)
+      argNames_->mark();
+    
     return true;
   }
   return false;

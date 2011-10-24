@@ -106,8 +106,12 @@ void Package::exportSymbol(std::string name) {
   }
   else {
     // find symbol from inheritance, intern it, then extern it
-    importSymbol(name);
-    externedSymbols_.insert(name); // extern it 
+    if (resolveExternSymbol(name)) {
+      importSymbol(name);
+      externedSymbols_.insert(name); // extern it 
+    }
+    else
+      throw "package-error: could not resolve symbol";
   }
 }
 
@@ -120,7 +124,9 @@ void Package::unexportSymbol(std::string name) {
 
 void Package::importSymbol(std::string name) {
   Symbol *sym = resolveExternSymbol(name);
-  symbols_[name] = sym;
+  if (sym) {
+    symbols_[name] = sym;
+  }  
 }
 
 void Package::usePackage(Package &package) {
