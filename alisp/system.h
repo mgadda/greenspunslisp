@@ -33,7 +33,6 @@ LISPFUN(returnFrom);
 LISPFUN(function);
 LISPFUN(lambda);
 LISPFUN(gc);
-LISPFUN(defmacro);
 LISPFUN(eval);
 
 #pragma mark System Functions
@@ -47,7 +46,6 @@ LISPFUN(intEqual);
 LISPFUN(list);
 LISPFUN(listStar);
 LISPFUN(funcall);
-LISPFUN(macroexpand_1);
 LISPFUN(findSymbol);
 LISPFUN(exportSymbol);
 

@@ -33,11 +33,15 @@ Object *eval(Object* obj, Environment *env) {
       }
 
       Symbol *symbol = (Symbol*)cons->car();  
-      Callable &fun = *env->functionForSymbol(symbol);
+      Object *obj = env->variableForSymbol(symbol);
       
-      if (!&fun) {
+      if (obj->type() != std::string("SPECIAL_OPERATOR") &&
+          obj->type() != std::string("MACRO") &&
+          obj->type() != std::string("FUNCTION")) {
         throw "EVAL: not a function name";
       }
+      
+      Callable &fun = *((Callable*)obj);
       
       Cons *args = (Cons*)cons->cdr();
 

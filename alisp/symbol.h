@@ -21,9 +21,6 @@ class Callable;
 class Symbol : public Object {
   std::string name_; // name cell
   Package *package_; // package cell
-  Object *value_; // value cell
-  Callable *function_; // function cell
-  Callable *macro_; // macro cell
   
   Cons *propertyList_;
   
@@ -43,15 +40,6 @@ public:
   
   Cons *propertyList();
   
-  Object *value();
-  void setValue(Object *value);
-  
-  Callable *function();
-  void setFunction(Callable *value);
-
-  Callable *macro();
-  void setMacro(Callable *value);
-
   static Symbol *nil();  
   static Symbol *t();
   

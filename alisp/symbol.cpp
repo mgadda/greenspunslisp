@@ -11,6 +11,7 @@
 #include "package.h"
 #include "cons.h"
 #include "callable.h"
+#include "environment.h"
 
 Symbol::Symbol(std::string name) { 
   name_ = name;
@@ -32,7 +33,8 @@ Symbol *Symbol::nil() {
   if (!nil_) {
     nil_ = Package::common_lisp().internSymbol("NIL");
   }
-  nil_->setValue(nil_);
+  Environment::initial().bindVariable(nil_, nil_);
+
   Package::common_lisp().exportSymbol("NIL");
   
   return nil_;
@@ -42,7 +44,8 @@ Symbol *Symbol::t() {
   if(!t_) {
     t_ = Package::common_lisp().internSymbol("T");
   }
-  t_->setValue(t_);
+  Environment::initial().bindVariable(t_, t_);
+  
   Package::common_lisp().exportSymbol("T");
   
   return t_;
@@ -70,28 +73,10 @@ Cons *Symbol::propertyList() {
   return propertyList_;
 }
 
-Object *Symbol::value() { return value_; }
-void Symbol::setValue(Object *value) { value_ = value; }
-
-Callable *Symbol::function() { return function_; }
-void Symbol::setFunction(Callable *value) { function_ = value; }
-
-Callable *Symbol::macro() { return macro_; }
-void Symbol::setMacro(Callable *value) { macro_ = value; }
-
 bool Symbol::mark() {
   if (Object::mark()) {
     if (package_)
       package_->mark();
-    
-    if (value_)
-      value_->mark();
-    
-    if (function_)
-      function_->mark();
-
-    if (macro_)
-      macro_->mark();
 
     if (propertyList_)
       propertyList_->mark();

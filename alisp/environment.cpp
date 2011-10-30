@@ -24,14 +24,6 @@ Environment::Environment(Environment *parent) {
 Object *Environment::bindVariable(Symbol* symbol, Object* variable) {
   return variableBindings_[symbol] = variable;
 }
-Callable *Environment::bindFunction(Symbol* symbol, Callable* function) {
-  return functionBindings_[symbol] = function;  
-}
-
-Callable *Environment::bindMacro(Symbol* symbol, Callable* macro) {
-  return functionBindings_[symbol] = macro;  
-}
-
 
 void Environment::unbindVariable(Symbol* symbol) {
   variableBindings_.erase(symbol);
@@ -44,36 +36,8 @@ Object *Environment::variableForSymbol(Symbol *symbol) {
   else {
     if (parent_)
       obj = parent_->variableForSymbol(symbol); // lexical value
-    else 
-      obj = symbol->value(); // global value
   }
   return obj;
-}
-
-Callable *Environment::functionForSymbol(Symbol *symbol) {  
-  Callable *fun = NULL;
-  if(functionBindings_.count(symbol))
-    fun = functionBindings_[symbol];
-  else {
-    if (parent_)
-      fun = parent_->functionForSymbol(symbol);
-    else
-      fun = symbol->function();
-  }
-  return fun;  
-}
-
-Callable *Environment::macroForSymbol(Symbol *symbol) {  
-  Callable *fun = NULL;
-  if(macroBindings_.count(symbol))
-    fun = macroBindings_[symbol];
-  else {
-    if (parent_)
-      fun = parent_->macroForSymbol(symbol);
-    else
-      fun = symbol->macro();
-  }
-  return fun;  
 }
 
 bool Environment::mark() {
@@ -106,4 +70,12 @@ bool Environment::mark() {
     return true;
   }
   return false;
+}
+
+Environment *Environment::initial_;
+Environment &Environment::initial() {
+  if (!initial_)
+    initial_ = new Environment(NULL);
+  
+  return *initial_;
 }

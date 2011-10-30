@@ -21,6 +21,8 @@ class Environment : public Object {
   std::map<Symbol*,Callable*> functionBindings_;
   std::map<Symbol*,Callable*> macroBindings_;
   
+  static Environment *initial_;
+  
 public:
   virtual const char *type() { return "ENVIRONMENT"; }
   virtual Object *print(std::ostream &os);
@@ -28,15 +30,12 @@ public:
   Environment(Environment *parent);
   
   Object *bindVariable(Symbol* symbol, Object* variable);
-  Callable *bindFunction(Symbol* symbol, Callable* function);
-  Callable *bindMacro(Symbol* symbol, Callable* macro);
   void unbindVariable(Symbol* symbol);
   
   Object *variableForSymbol(Symbol *symbol);
-  Callable *functionForSymbol(Symbol *symbol);
-  Callable *macroForSymbol(Symbol *symbol);
   
   virtual bool mark();
+  static Environment &initial();
 };
 
 #endif

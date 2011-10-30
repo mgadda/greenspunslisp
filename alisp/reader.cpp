@@ -18,6 +18,7 @@
 #include "package.h"
 #include "cons.h"
 #include "keyword.h"
+#include "environment.h"
 
 namespace  {
 
@@ -288,7 +289,7 @@ namespace  {
     // search in current package interned symbols
     // then search externed and recursively search parents externed
     
-    package = (Package*)Package::common_lisp().resolveExternSymbol("*PACKAGE*")->value();
+    package = (Package*)Environment::initial().variableForSymbol(Package::common_lisp().resolveExternSymbol("*PACKAGE*"));
 
     Symbol *sym = package->resolveInternSymbol(symbolName);
     if (sym) return sym;

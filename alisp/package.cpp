@@ -10,6 +10,7 @@
 #include "package.h"
 #include "symbol.h"
 #include "keyword.h"
+#include "environment.h"
 
 void Package::setSymbol(std::string name, Symbol *symbol) {
   symbols_[name] = symbol;
@@ -45,7 +46,7 @@ Package &Package::keyword() { return Package::keyword_; }
 Keyword *Package::keywordForName(std::string name) {
   Keyword *keyword = new Keyword(name);
   Package::keyword().setSymbol(name, keyword);
-  keyword->setValue(keyword);
+  Environment::initial().bindVariable(keyword, keyword);
   Package::keyword().exportSymbol(name);
   return keyword;
 }

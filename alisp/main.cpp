@@ -29,19 +29,20 @@ int main (int argc, const char * argv[])
   mother.addRoot(&Package::common_lisp_user());
   mother.addRoot(&Package::keyword());
   
-  Environment *env =  new Environment(NULL);
-  
-  mother.addRoot(env);
+  Environment &env = Environment::initial();
+  mother.addRoot(&env);
 
   // Import basic packages
   Package::system().usePackage(Package::keyword());
   Package::common_lisp().usePackage(Package::system());
   Package::common_lisp_user().usePackage(Package::common_lisp());
   
+  
   // Other necessary symbols for the reader to function
   Symbol *sym = Package::common_lisp().internSymbol("*PACKAGE*");  
-  sym->setValue(&Package::common_lisp_user());
+  env.bindVariable(sym, &Package::common_lisp_user());
   sym->setNoGC(true);
+  
   Package::common_lisp().exportSymbol(sym->name());
   
   // Never collect these symbols
@@ -91,7 +92,7 @@ int main (int argc, const char * argv[])
       
       if (obj) {
         try {        
-          Object* evaledObject = eval(obj, env);
+          Object* evaledObject = eval(obj, &Environment::initial());
           evaledObject->print(std::cout);          
         } catch (const char *msg) {        
           std::cout << msg;

@@ -30,8 +30,8 @@ namespace  {
     Symbol *sym = package.internSymbol(name);
     package.exportSymbol(name);
     
-    Callable *fun = new Function(name, funcPtr, minRequiredArgs);  
-    sym->setFunction(fun);
+    Callable *fun = new Function(name, funcPtr, minRequiredArgs);
+    Environment::initial().bindVariable(sym, fun);
   }
 
   void bindSymbolToSpecialOperator(Package &package, std::string name, Object *(*funcPtr)(Cons*,Environment*), size_t minRequiredArgs, bool shouldExportSymbol) {
@@ -40,12 +40,14 @@ namespace  {
       package.exportSymbol(name);
     
     Callable *fun = new SpecialOperator(name, funcPtr, minRequiredArgs);  
-    sym->setFunction(fun);
+    Environment::initial().bindVariable(sym, fun);
   }
 
 };
                         
 void initSystem() {
+  Environment &env = Environment::initial();
+  
   Package &system = Package::system();
   
   // Special Operators
@@ -60,7 +62,6 @@ void initSystem() {
   bindSymbolToSpecialOperator(system, "FUNCTION", function, 1, true);
   bindSymbolToSpecialOperator(system, "LAMBDA", lambda, 1, true);
   bindSymbolToSpecialOperator(system, "GC", gc, 0, false);
-  bindSymbolToSpecialOperator(system, "DEFMACRO", defmacro, 2, true);
   bindSymbolToSpecialOperator(system, "EVAL", (Object *(*)(Cons*,Environment*))eval, 1, true);
   
   // System Functions
@@ -74,7 +75,6 @@ void initSystem() {
   bindSymbolToFunc(system, "LIST", list, 0, true);
   bindSymbolToFunc(system, "LIST*", listStar, 0, true);
   bindSymbolToFunc(system, "FUNCALL", funcall, 1, true);
-  bindSymbolToFunc(system, "MACROEXPAND-1", macroexpand_1, 1, true);
   bindSymbolToFunc(system, "FIND-SYMBOL", findSymbol, 1, true);
   bindSymbolToFunc(system, "EXPORT", exportSymbol, 1, true);
   
@@ -85,7 +85,9 @@ void initSystem() {
 //  bindSymbolToFunc(system, "UNQUOTE", unquote);
 //  bindSymbolToFunc(system, "SPLICE", splice);
   
-  Package::system().internSymbol("*MACROEXPAND-HOOK*")->setValue(Package::system().resolveInternSymbol("FUNCALL")->function());
+  Symbol *expandHook = Package::system().internSymbol("*MACROEXPAND-HOOK*");  
+  env.bindVariable(expandHook, env.variableForSymbol(Package::system().resolveInternSymbol("FUNCALL"))); 
+  
   Package::system().exportSymbol("*MACROEXPAND-HOOK*");
 
 }
@@ -372,7 +374,7 @@ LISPFUN(function) {
     }
     else {
       // function (function car) => #<SYSTEM-FUNCTION CAR>
-      Callable *fun = (Callable*)env->functionForSymbol((Symbol*)first);
+      Callable *fun = (Callable*)env->variableForSymbol((Symbol*)first);
       if (!fun || fun->type() != std::string("FUNCTION")) {
         throw "FUNCTION: undefined function ____";
       }
@@ -403,20 +405,6 @@ LISPFUN(gc) {
   return Symbol::nil();
 }
 
-LISPFUN(defmacro) {
-  // defmacro is basically what defun would look like if it were defined
-  Object *form;
-  Cons *lambdaList;
-  Symbol *macro_symbol;
-  
-  macro_symbol = (Symbol*)args->car();
-  lambdaList = (Cons*)(*args)[1];
-  form = (*args)[2];
-
-  macro_symbol->setFunction(new Macro(macro_symbol->name(), lambdaList, form));
-  return macro_symbol->function();
-}
-
 LISPFUN(eval) {
   if (args->length() > 1)
     throw "EVAL: too many arguments";
@@ -433,7 +421,7 @@ LISPFUN(putd) {
   
   Object *value = (*args)[1];
   if (value->type() == std::string("FUNCTION")) {
-    sym->setFunction((Callable*)value);
+    env->bindVariable(sym, value);
   }
   return value;
 }
@@ -530,7 +518,7 @@ LISPFUN(funcall) {
   Function *fun = NULL;
   
   if (args->car()->type() == std::string("SYMBOL")) {
-    fun = (Function*)env->functionForSymbol((Symbol*)args->car());
+    fun = (Function*)env->variableForSymbol((Symbol*)args->car());
   }
   else if (args->car()->type() == std::string("FUNCTION")) {
     fun = (Function*)args->car();
@@ -545,55 +533,6 @@ LISPFUN(funcall) {
   }
   
   throw "FUNCALL: not a function";
-}
-
-LISPFUN(macroexpand_1) {
-  /*
-   Once macroexpand-1 has determined that the form is a macro form, 
-   it obtains an appropriate expansion function for the macro or 
-   symbol macro. The value of *macroexpand-hook* is coerced to a 
-   function and then called as a function of three arguments: the 
-   expansion function, the form, and the env. The value returned 
-   from this call is taken to be the expansion of the form.
-   */
-  
-  // determine if the form (macroexpand-1 '(defun foo ...))
-  // is a macro form
-  // if it is, get the expansion function with
-  // (macro-function (car args)) OR really:
-  // 
-  if (args->car()->type() == std::string("SYMBOL")) {
-    throw "not yet implemented: symbol macros";
-  }
-  
-  if (args->car()->type() != std::string("CONS")) {
-    throw "MACROEXPAND-1: not a macro form"; // TODO: check if this right
-  }
-  
-  Cons *macroForm = (Cons*)args->car();
-  
-  if (macroForm->car()->type() != std::string("SYMBOL")) {
-    throw "MACROEXPAND-1: not a macro form"; // TODO: check if this right
-  }
-  
-  Symbol *macroSymbol = (Symbol*)macroForm->car();
-  
-  Callable *expansionFunction = env->functionForSymbol(macroSymbol);
-  
-  if (!expansionFunction) {
-    // TODO: check if this right
-    throw "MACROEXPAND-1: could not coerce symbol to macro function";
-  }
-  
-  // Get macroexpansion hook
-  Symbol *macroexpand_hook = Package::system().resolveInternSymbol("*MACROEXPAND-HOOK*");
-  
-  Callable *fun = (Callable*)env->variableForSymbol(macroexpand_hook);
-  
-  args->setCdr(new Cons(env)); // append env onto end of list
-  args = new Cons(expansionFunction, args); // prepend function to front of list
-  
-  return fun->call(args, env);
 }
 
 LISPFUN(findSymbol) {
@@ -617,7 +556,7 @@ LISPFUN(findSymbol) {
     }
   }
   else {
-    package = (Package*)Package::common_lisp().resolveExternSymbol("*PACKAGE*")->value();    
+    package = (Package*)env->variableForSymbol(Package::common_lisp().resolveExternSymbol("*PACKAGE*"));    
   }
   
   Symbol *symbol = package->resolveExternSymbol(symbolName->value());
@@ -650,7 +589,7 @@ LISPFUN(exportSymbol) {
     }
   }
   else {
-    package = (Package*)Package::common_lisp().resolveExternSymbol("*PACKAGE*")->value();    
+    package = (Package*)env->variableForSymbol(Package::common_lisp().resolveExternSymbol("*PACKAGE*"));    
   }
   
   package->exportSymbol(symbol->name());
@@ -668,7 +607,7 @@ LISPFUN(symbol_function) {
     throw "SYMBOL-FUNCTION: not a symbol";
   }
   
-  fun = (Callable*)env->functionForSymbol((Symbol*)args->car());
+  fun = (Callable*)env->variableForSymbol((Symbol*)args->car());
   
   if (!fun)
     throw "SYMBOL-FUNCTION: no function defined";
