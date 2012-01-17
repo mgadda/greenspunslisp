@@ -3,7 +3,7 @@
 //  alisp
 //
 //  Created by Matt Gadda on 10/3/11.
-//  Copyright (c) 2011 Catalpa Labs. All rights reserved.
+//  Copyright (c) 2012 Matt Gadda. All rights reserved.
 //
 
 #ifndef alisp_mother_h
